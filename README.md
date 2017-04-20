@@ -2,11 +2,14 @@
 
 > 使用vue2.0+mongodb构建，仿qq空间，有说说，博客，相册，留言，好友等模块。
 
-## Build Setup
+## 运行
 
 ``` bash
-# install dependencies
+# 安装依赖
 npm install
+
+# 初始化citys数据库
+npm run initCitys
 
 # serve with hot reload at localhost:8080
 npm run dev

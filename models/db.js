@@ -1,6 +1,7 @@
-/**
- * Created by Danny on 2015/9/25 9:31.
+/*
+ * mongodb相关配置
  */
+
 //这个模块里面封装了所有对数据库的常用操作
 var MongoClient = require('mongodb').MongoClient;
 var settings = require("../settings.js");
@@ -18,28 +19,28 @@ function _connectDB(callback) {
     });
 }
 
-init();
-
-function init(){
-    //对数据库进行一个初始化
-    _connectDB(function(err, db){
-        if (err) {
-            console.log(err);
-            return;
-        }
-        db.collection('users').createIndex(
-            { "username": 1},
-            null,
-            function(err, results) {
-                if (err) {
-                    console.log(err);
-                    return;
-                }
-                console.log("索引建立成功");
-            }
-        );
-    });
-}
+// init();
+//
+// function init(){
+//     //对数据库进行一个初始化
+//     _connectDB(function(err, db){
+//         if (err) {
+//             console.log(err);
+//             return;
+//         }
+//         db.collection('users').createIndex(
+//             { "user": 1},
+//             null,
+//             function(err, results) {
+//                 if (err) {
+//                     console.log(err);
+//                     return;
+//                 }
+//                 console.log("索引建立成功");
+//             }
+//         );
+//     });
+// }
 
 //插入数据
 exports.insertOne = function (collectionName, json, callback) {

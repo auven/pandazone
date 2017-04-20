@@ -3,6 +3,7 @@ import Router from 'vue-router';
 import Hello from '@/components/Hello';
 import register from '@/components/register/register';
 import page404 from '@/components/404/404';
+import login from '@/components/login/login';
 
 Vue.use(Router);
 
@@ -18,7 +19,7 @@ export default new Router({
     {
       path: '/login',
       name: 'login',
-      component: {template: '<div>login页面</div>'}
+      component: login
     },
     {
       path: '/register',
