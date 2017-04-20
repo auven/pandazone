@@ -1,14 +1,18 @@
 <template>
   <div class="header">
-    <el-menu :default-active="activeIndex" class="el-menu-header" mode="horizontal" @select="handleSelect">
-      <el-menu-item index="1">处理中心</el-menu-item>
-      <el-submenu index="2">
-        <template slot="title">我的工作台</template>
-        <el-menu-item index="2-1">选项1</el-menu-item>
-        <el-menu-item index="2-2">选项2</el-menu-item>
-        <el-menu-item index="2-3">选项3</el-menu-item>
+    <el-menu :default-active="activeIndex" class="el-menu-header" mode="horizontal" router="true" @select="handleSelect">
+      <el-menu-item index="/" class="pandazone">熊猫空间</el-menu-item>
+      <el-menu-item index="/user">空间动态</el-menu-item>
+      <el-submenu index="/user">
+        <template slot="title">我的主页</template>
+        <el-menu-item index="/user/1">个人主页</el-menu-item>
+        <el-menu-item index="/user/1">说说</el-menu-item>
+        <el-menu-item index="/user/2">博客</el-menu-item>
+        <el-menu-item index="/user/3">相册</el-menu-item>
+        <el-menu-item index="/user/4">留言</el-menu-item>
+        <el-menu-item index="/user/5">好友</el-menu-item>
+        <el-menu-item index="/user/6">个人档</el-menu-item>
       </el-submenu>
-      <el-menu-item index="3"><a href="https://www.ele.me" target="_blank">订单管理</a></el-menu-item>
     </el-menu>
   </div>
 </template>
@@ -34,6 +38,9 @@
   .el-menu-header
     color: #ffffff
     background: #20A0FF
+    .pandazone
+      font-size: 18px
+      font-weight: 700
     >.el-menu-item, .el-submenu .el-submenu__title
       color: #ffffff
       &:hover

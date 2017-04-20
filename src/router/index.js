@@ -22,6 +22,11 @@ export default new Router({
       component: login
     },
     {
+      path: '/recoverPass',
+      name: 'recoverPass',
+      component: login
+    },
+    {
       path: '/register',
       name: 'register',
       component: register

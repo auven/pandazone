@@ -77,13 +77,7 @@
               :type="tag.type"
               :closable="true"
               :close-transition="false"
-              @close="handleClose(tag)">
-              {{tag.name}}
-
-
-
-
-
+              @close="handleClose(tag)">{{tag.name}}
             </el-tag>
             <el-input
               class="input-new-tag"
@@ -146,7 +140,7 @@
           <div class="msg1">感谢您的注册</div>
         </el-col>
       </el-row>
-      <div class="login"><router-link to="/login">点击登录</router-link></div>
+      <div class="gotoIndex">正在为您跳转...</div>
     </div>
   </div>
 </template>
@@ -530,11 +524,8 @@
         font-size: 12px
         line-height: 25px
         color: #8492A6
-      .login
+      .gotoIndex
         margin: 50px auto
         text-align: center
-        a
-          color: #58B7FF
-          &:hover
-            color: #1D8CE0
+        color: #58B7FF
 </style>
