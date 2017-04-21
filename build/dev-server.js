@@ -45,6 +45,7 @@ app.get('/checkCaptcha',router.checkCaptcha);
 app.get('/findUser/:user',router.findUser);
 app.post('/uploadAvatar',router.uploadAvatar);
 app.post('/dologin',router.dologin);
+app.get('/checkEmail/:user/:email',router.checkEmail);
 
 var compiler = webpack(webpackConfig)
 

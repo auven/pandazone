@@ -218,3 +218,21 @@ exports.dologin = function (req, res, next) {
     })
   });
 };
+
+// 找回密码之验证邮箱
+exports.checkEmail = function (req, res, next) {
+  var user = req.params["user"];
+  var email = req.params["email"];
+  //查询数据库中是不是有这个人
+  User.find({"user": user, "email": email}, function (err, result) {
+    if (err) {
+      res.send("-3"); //服务器错误
+      return;
+    }
+    if (result.length !== 0) {
+      res.send("1"); // 验证成功
+    } else {
+      res.send("-1"); // 验证失败，邮箱错误
+    }
+  })
+};
