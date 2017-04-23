@@ -3,9 +3,9 @@
     <div class="main">
       <div class="main-wrapper">
         <div class="main-body">
-          <v-header></v-header>
+          <v-header :user="user"></v-header>
           <div class="main-box">
-            <router-view></router-view>
+            <router-view :user="user"></router-view>
           </div>
         </div>
       </div>
@@ -23,13 +23,33 @@
   export default {
     name: 'app',
     data() {
-      return {};
+      return {
+        user: {
+          loginUser: {
+            user: '',
+            name: '',
+            avatar: ''
+          },
+          showUser: '',
+          isLoginUser: true
+        }
+      };
+    },
+    watch: {
+      loginUser: {
+        handler: function () {
+          console.log(this.user);
+        },
+        deep: true
+      }
     },
     components: {
       'v-header': header,
       'v-footer': footer
     },
-    methods: {}
+    methods: {
+
+    }
   };
 </script>
 

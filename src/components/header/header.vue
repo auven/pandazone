@@ -3,24 +3,26 @@
     <el-menu :default-active="activeIndex" class="el-menu-header" mode="horizontal" router="true"
              @select="handleSelect">
       <el-menu-item index="/" class="pandazone">熊猫空间</el-menu-item>
-      <el-menu-item index="/" v-show="isLogin">空间动态</el-menu-item>
+      <el-menu-item index="/" v-show="isLogin"><span v-show="user.isLoginUser">空间动态</span><span
+        v-show="!user.isLoginUser">返回我的空间</span></el-menu-item>
       <el-submenu index="" v-show="isLogin">
-        <template slot="title">我的主页</template>
-        <el-menu-item index="/user">个人主页</el-menu-item>
-        <el-menu-item index="/user/mood">说说</el-menu-item>
-        <el-menu-item index="/user/blog">博客</el-menu-item>
-        <el-menu-item index="/user/album">相册</el-menu-item>
-        <el-menu-item index="/user/message">留言</el-menu-item>
-        <el-menu-item index="/user/friends">好友</el-menu-item>
-        <el-menu-item index="/user/profile">个人档</el-menu-item>
+        <template slot="title"><span v-show="user.isLoginUser">我的主页</span><span v-show="!user.isLoginUser">Ta的主页</span>
+        </template>
+        <el-menu-item :index="'/' + user.showUser">个人主页</el-menu-item>
+        <el-menu-item :index="'/' + user.showUser + '/mood'">说说</el-menu-item>
+        <el-menu-item :index="'/' + user.showUser + '/blog'">博客</el-menu-item>
+        <el-menu-item :index="'/' + user.showUser + '/album'">相册</el-menu-item>
+        <el-menu-item :index="'/' + user.showUser + '/message'">留言</el-menu-item>
+        <el-menu-item :index="'/' + user.showUser + '/friends'">好友</el-menu-item>
+        <el-menu-item :index="'/' + user.showUser + '/profile'">个人档</el-menu-item>
       </el-submenu>
     </el-menu>
     <div class="header-info" v-show="isLogin">
-      <router-link to="/register">
-        <img src="/avatar/auven.jpg">
+      <router-link :to="'/' + user.loginUser.user + '/profile'">
+        <img :src="user.loginUser.avatar">
       </router-link>
-      <router-link class="name" to="/register">
-        <span>{{ login }}</span>
+      <router-link class="name" :to="'/' + user.loginUser.user + '/profile'">
+        <span>{{ user.loginUser.name }}</span>
       </router-link>
       <span class="exit" @click="exit"><i class="icon-tuichu"></i>退出</span>
     </div>
@@ -35,38 +37,59 @@
   import router from '../../router';
 
   export default {
+    props: {
+      user: {
+        type: Object
+      }
+    },
     watch: {
       '$route': function () {
-        this.fetchData();
+        this.checkLogin();
+//        为什么我把fetchData放在这里？因为如果在父组件中变化，不会同步到子组件中
         this.changeActiveIndex();
       }
     },
     data() {
       return {
         activeIndex: '/',
-        isLogin: false,
-        login: ''
+        isLogin: false
       };
     },
     created() {
-      this.fetchData();
+      this.checkLogin();
       this.changeActiveIndex();
     },
     methods: {
       handleSelect(key, keyPath) {
         console.log(key, keyPath);
       },
-      fetchData() {
+      checkLogin() {
         console.log('路由变化');
-        this.$http.get('/getSession/login').then(response => {
+        var user = this.$route.params['user'] || '';
+        this.$http.get('/checkLogin?user=' + user).then(response => {
           // success callback
           var result = response.body;
-          if (result.success === '-1') {
+          if (result.result === '-1') {
             this.isLogin = false;
+
+            if (this.$route.fullPath !== '/register' && this.$route.fullPath !== '/login') {
+              this.$message.warning('您还未登录');
+              router.push({name: 'login'});
+            }
           }
-          if (result.success === '1') {
+          if (result.result === '1') {
             this.isLogin = true;
-            this.login = result.body;
+            this.user.loginUser.user = result.info.user;
+            this.user.loginUser.name = result.info.name;
+            this.user.loginUser.avatar = result.info.avatar;
+            this.user.showUser = (user === '') ? result.info.user : user;
+            this.user.isLoginUser = result.isLoginUser;
+          }
+          if (result.result === '-2') {
+            if (this.$route.params['user'] !== '') {
+              this.$message.error('用户' + user + '不存在，访问失败');
+            }
+            router.push({name: '404'});
           }
         }, response => {
           // error callback
@@ -119,12 +142,15 @@
           border-bottom: 5px solid #99d2fc
         &.is-active
           color: #ffffff
-          border-bottom: 5px solid #99d2fc
+        /*border-bottom: 5px solid #99d2fc*/
         &:first-child
           border-bottom: none
-      .el-submenu.is-active .el-submenu__title, .el-submenu.is-opened .el-submenu__title
+      /*.el-submenu.is-active .el-submenu__title, */
+      .el-submenu.is-opened .el-submenu__title
         background: #20A0FF
         border-bottom: 5px solid #99d2fc
+      .el-submenu.is-active.is-opened .el-menu-item.is-active
+        color: #48576a;
     .header-info, .lgORrg
       display: flex
       align-items: center

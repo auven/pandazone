@@ -105,7 +105,7 @@ exports.doRegist = function (req, res, next) {
         hobby: hobby,
         label: label,
         sign: sign
-      },function (err, result) {
+      }, function (err, result) {
         if (err) {
           res.send("-3"); //服务器错误
           return;
@@ -205,18 +205,18 @@ exports.dologin = function (req, res, next) {
 
     //设置md5加密
     pass = md5(md5(pass) + "考拉");
-    User.find({"user": user, "pass": pass}, function (err, result) {
+    User.find({"user": user, "pass": pass}, 'name avatar', function (err, result) {
       if (err) {
-        res.send("-3"); // 服务器错误
+        res.json({result: "-3"}); // 服务器错误
         return;
       }
       if (result.length !== 0) {
         // 设置session
         req.session.login = user;
         req.session.user = user;
-        res.send("1"); // 登录成功
+        res.json({result: "1", info: {user: user, name: result[0].name, avatar: result[0].avatar}}); // 登录成功
       } else {
-        res.send("-1"); // 登录失败，密码错误
+        res.json({result: "-1"}); // 登录失败，密码错误
       }
     })
   });
@@ -240,31 +240,58 @@ exports.checkEmail = function (req, res, next) {
   })
 };
 
-exports.getSession = function (req, res, next) {
-  var option = req.params["option"];
+// 检查登录状态
+exports.checkLogin = function (req, res, next) {
+  var user = req.query.user;
+
   var login = req.session.login || '';
-  var user = req.session.user || '';
-  if (option === 'login') {
-    if (login !== '') {
-      res.json({success: '1', body: req.session.login});
-    } else {
-      res.json({success: '-1'});
-    }
-    return;
+  if (login !== '') {
+
+    User.find({"user": login}, 'name avatar', function (err, result) {
+      if (err) {
+        res.json({result: "-3"}); // 服务器错误
+        return;
+      }
+      var isLoginUser = true;
+      if (user !== '' && user !== login) {
+        User.find({"user": user}, function (err, result1) {
+          if (result1.length === 0) {
+            res.json({result: "-2"}); // 没有这个用户
+          } else {
+            isLoginUser = false;
+
+            res.json({result: "1", info: {user: login, name: result[0].name, avatar: result[0].avatar}, isLoginUser: isLoginUser});
+          }
+        });
+      } else {
+        res.json({result: "1", info: {user: login, name: result[0].name, avatar: result[0].avatar}, isLoginUser: isLoginUser});
+      }
+    });
+  } else {
+    res.json({result: '-1'});
   }
-  if (option === 'user') {
-    if (user !== '') {
-      res.json({success: '1', body: req.session.user});
-    } else {
-      res.json({success: '-1'});
-    }
-    return;
-  }
-  res.send('-3'); // 非法请求
 };
 
 exports.exit = function (req, res, next) {
   req.session.login = '';
   req.session.user = '';
   res.send('1');
+};
+
+// 设置显示的用户
+exports.setUser = function (req, res, next) {
+  var user = req.params["user"];
+  //查询数据库中是不是有这个人
+  User.find({"user": user}, function (err, result) {
+    if (err) {
+      res.json({result: "-3"}); //服务器错误
+      return;
+    }
+    if (result.length !== 0) {
+      req.session.user = user;
+      res.json({result: "1"}); // 验证成功
+    } else {
+      res.json({result: "-1"}); // 验证失败，邮箱错误
+    }
+  })
 };

@@ -98,7 +98,7 @@ export default new Router({
           component: {template: '<div>个人档页面</div>'}
         },
         {
-          path: 'album/modify',
+          path: 'profile/modify',
           name: 'profileModify',
           component: {template: '<div>修改个人档页面</div>'}
         }

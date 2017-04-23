@@ -81,6 +81,11 @@
   import router from '../../router';
 
   export default {
+    props: {
+      user: {
+        type: Object
+      }
+    },
     data() {
       var checkUser = (rule, value, callback) => {
         let patt = /^[a-zA-Z0-9_]{3,12}$/;
@@ -310,11 +315,15 @@
 
           // get body data
           var result = response.body;
-          if (result === '1') {
+          if (result.result === '1') {
             this.$message({
               message: '登录成功',
               type: 'success'
             });
+            this.user.loginUser.user = result.info.user;
+            this.user.loginUser.name = result.info.name;
+            this.user.loginUser.avatar = result.info.avatar;
+            this.user.showUser = result.info.user;
             router.push({path: '/'});
           } else {
             this.$message.error('密码错误');
