@@ -211,6 +211,9 @@ exports.dologin = function (req, res, next) {
         return;
       }
       if (result.length !== 0) {
+        // 设置session
+        req.session.login = user;
+        req.session.user = user;
         res.send("1"); // 登录成功
       } else {
         res.send("-1"); // 登录失败，密码错误
@@ -235,4 +238,33 @@ exports.checkEmail = function (req, res, next) {
       res.send("-1"); // 验证失败，邮箱错误
     }
   })
+};
+
+exports.getSession = function (req, res, next) {
+  var option = req.params["option"];
+  var login = req.session.login || '';
+  var user = req.session.user || '';
+  if (option === 'login') {
+    if (login !== '') {
+      res.json({success: '1', body: req.session.login});
+    } else {
+      res.json({success: '-1'});
+    }
+    return;
+  }
+  if (option === 'user') {
+    if (user !== '') {
+      res.json({success: '1', body: req.session.user});
+    } else {
+      res.json({success: '-1'});
+    }
+    return;
+  }
+  res.send('-3'); // 非法请求
+};
+
+exports.exit = function (req, res, next) {
+  req.session.login = '';
+  req.session.user = '';
+  res.send('1');
 };

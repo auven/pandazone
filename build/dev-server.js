@@ -46,6 +46,8 @@ app.get('/findUser/:user',router.findUser);
 app.post('/uploadAvatar',router.uploadAvatar);
 app.post('/dologin',router.dologin);
 app.get('/checkEmail/:user/:email',router.checkEmail);
+app.get('/getSession/:option',router.getSession);
+app.post('/exit',router.exit);
 
 var compiler = webpack(webpackConfig)
 

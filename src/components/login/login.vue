@@ -315,7 +315,7 @@
               message: '登录成功',
               type: 'success'
             });
-            router.push({path: '/register/111'});
+            router.push({path: '/'});
           } else {
             this.$message.error('密码错误');
           }

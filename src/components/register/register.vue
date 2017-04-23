@@ -471,7 +471,9 @@
     margin: 50px auto
     padding: 30px
     width: 720px
+    background: #ffffff
     border: 1px solid #8492A6
+    border-radius: 5px
     .steps
       padding-left: 50px
     .step1

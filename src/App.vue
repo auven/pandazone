@@ -5,7 +5,7 @@
         <div class="main-body">
           <v-header></v-header>
           <div class="main-box">
-            <!--<router-view></router-view>-->
+            <router-view></router-view>
           </div>
         </div>
       </div>
@@ -22,10 +22,14 @@
 
   export default {
     name: 'app',
+    data() {
+      return {};
+    },
     components: {
       'v-header': header,
       'v-footer': footer
-    }
+    },
+    methods: {}
   };
 </script>
 
@@ -37,13 +41,13 @@
     overflow: auto
     .main-wrapper
       min-height: 100%
+      background: url(/static/images/72019_top.png) center 60px no-repeat
       .main-body
-        padding-bottom: 165px
+        padding-bottom: 170px
         .main-box
-          background: url(/static/images/72019_top.png) top center no-repeat
           overflow: hidden
     .main-footer
       position: relative
-      height: 165px
-      margin: -165px auto 0 auto
+      height: 170px
+      margin: -170px auto 0 auto
 </style>
