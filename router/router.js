@@ -104,14 +104,16 @@ exports.doRegist = function (req, res, next) {
         city: city,
         hobby: hobby,
         label: label,
-        sign: sign
+        sign: sign,
+        visits: 0
       }, function (err, result) {
         if (err) {
           res.send("-3"); //服务器错误
           return;
         }
         console.log('注册成功');
-        res.send("1"); // 注册成功
+        req.session.login = user;
+        res.json({result: "1", info: {user: user, name: name, avatar: avatar}}); // 注册成功
       })
     })
   });
@@ -178,19 +180,34 @@ exports.findUser = function (req, res, next) {
 
 // 上传头像
 exports.uploadAvatar = function (req, res, next) {
+  // 先判断upload/avatar文件夹是否存在，不存在就创建
+  var uploadDir = fs.existsSync("./upload");
+  var avatarDir = fs.existsSync("./upload/avatar");
+
+  if (!uploadDir) {
+    console.log('创建upload文件夹');
+    fs.mkdirSync("./upload");
+  }
+
+  if (!avatarDir) {
+    console.log('创建upload/avatar文件夹');
+    fs.mkdirSync("./upload/avatar");
+  }
+
+
   var form = new formidable.IncomingForm();
-  form.uploadDir = path.normalize(__dirname + "/../avatar");
+  form.uploadDir = path.normalize(__dirname + "/../upload/avatar");
   form.parse(req, function (err, fields, files) {
     // console.log(files);
     var oldpath = files.avatar.path;
     var newName = new Date().getTime() + ".jpg";
-    var newpath = path.normalize(__dirname + "/../avatar") + "/" + newName;
+    var newpath = path.normalize(__dirname + "/../upload/avatar") + "/" + newName;
     fs.rename(oldpath, newpath, function (err) {
       if (err) {
         res.send("失败");
         return;
       }
-      res.send({'id': 101, 'path': '/avatar/' + newName});
+      res.send({'id': 101, 'path': '/upload/avatar/' + newName});
     });
   });
 };
@@ -205,7 +222,7 @@ exports.dologin = function (req, res, next) {
 
     //设置md5加密
     pass = md5(md5(pass) + "考拉");
-    User.find({"user": user, "pass": pass}, 'name avatar', function (err, result) {
+    User.find({"user": user, "pass": pass}, 'name avatar visits', function (err, result) {
       if (err) {
         res.json({result: "-3"}); // 服务器错误
         return;
@@ -214,7 +231,7 @@ exports.dologin = function (req, res, next) {
         // 设置session
         req.session.login = user;
         req.session.user = user;
-        res.json({result: "1", info: {user: user, name: result[0].name, avatar: result[0].avatar}}); // 登录成功
+        res.json({result: "1", login: {user: user, name: result[0].name, avatar: result[0].avatar, visits: result[0].visits}}); // 登录成功
       } else {
         res.json({result: "-1"}); // 登录失败，密码错误
       }
@@ -247,24 +264,24 @@ exports.checkLogin = function (req, res, next) {
   var login = req.session.login || '';
   if (login !== '') {
 
-    User.find({"user": login}, 'name avatar', function (err, result) {
+    User.find({"user": login}, 'name avatar visits', function (err, result) {
       if (err) {
         res.json({result: "-3"}); // 服务器错误
         return;
       }
       var isLoginUser = true;
       if (user !== '' && user !== login) {
-        User.find({"user": user}, function (err, result1) {
+        User.find({"user": user}, 'name avatar visits', function (err, result1) {
           if (result1.length === 0) {
             res.json({result: "-2"}); // 没有这个用户
           } else {
             isLoginUser = false;
 
-            res.json({result: "1", info: {user: login, name: result[0].name, avatar: result[0].avatar}, isLoginUser: isLoginUser});
+            res.json({result: "1", login: {user: login, name: result[0].name, avatar: result[0].avatar, visits: result[0].visits}, user: {user: user, name: result1[0].name, avatar: result1[0].avatar, visits: result1[0].visits}, isLoginUser: isLoginUser});
           }
         });
       } else {
-        res.json({result: "1", info: {user: login, name: result[0].name, avatar: result[0].avatar}, isLoginUser: isLoginUser});
+        res.json({result: "1", login: {user: login, name: result[0].name, avatar: result[0].avatar, visits: result[0].visits}, isLoginUser: isLoginUser});
       }
     });
   } else {

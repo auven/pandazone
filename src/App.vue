@@ -28,9 +28,15 @@
           loginUser: {
             user: '',
             name: '',
-            avatar: ''
+            avatar: '',
+            visits: ''
           },
-          showUser: '',
+          showUser: {
+            user: '',
+            name: '',
+            avatar: '',
+            visits: ''
+          },
           isLoginUser: true
         }
       };

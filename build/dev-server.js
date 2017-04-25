@@ -37,7 +37,7 @@ app.use(session({
 
 //设置路由
 //注册业务
-app.use("/avatar",express.static("./avatar"));
+app.use("/upload",express.static("./upload"));
 app.post('/doregister',router.doRegist);
 app.get('/getCitys',router.getCitys);
 app.get('/getCaptcha',router.getCaptcha);

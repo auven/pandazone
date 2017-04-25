@@ -329,10 +329,8 @@
               message: '登录成功',
               type: 'success'
             });
-            this.user.loginUser.user = result.info.user;
-            this.user.loginUser.name = result.info.name;
-            this.user.loginUser.avatar = result.info.avatar;
-            this.user.showUser = result.info.user;
+            this.user.loginUser = result.login;
+            this.user.showUser = result.login;
             router.push({path: '/'});
           } else {
             this.$message.error('密码错误');

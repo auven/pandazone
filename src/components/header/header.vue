@@ -3,18 +3,18 @@
     <el-menu :default-active="activeIndex" class="el-menu-header" mode="horizontal" router="true"
              @select="handleSelect">
       <el-menu-item index="/" class="pandazone">熊猫空间</el-menu-item>
-      <el-menu-item index="/" v-show="isLogin"><span v-show="user.isLoginUser">空间动态</span><span
+      <el-menu-item :index="'/' + user.loginUser.user" v-show="isLogin"><span v-show="user.isLoginUser">空间动态</span><span
         v-show="!user.isLoginUser">返回我的空间</span></el-menu-item>
       <el-submenu index="" v-show="isLogin">
         <template slot="title"><span v-show="user.isLoginUser">我的主页</span><span v-show="!user.isLoginUser">Ta的主页</span>
         </template>
-        <el-menu-item :index="'/' + user.showUser">个人主页</el-menu-item>
-        <el-menu-item :index="'/' + user.showUser + '/mood'">说说</el-menu-item>
-        <el-menu-item :index="'/' + user.showUser + '/blog'">博客</el-menu-item>
-        <el-menu-item :index="'/' + user.showUser + '/album'">相册</el-menu-item>
-        <el-menu-item :index="'/' + user.showUser + '/message'">留言</el-menu-item>
-        <el-menu-item :index="'/' + user.showUser + '/friends'">好友</el-menu-item>
-        <el-menu-item :index="'/' + user.showUser + '/profile'">个人档</el-menu-item>
+        <el-menu-item :index="'/' + user.showUser.user">个人主页</el-menu-item>
+        <el-menu-item :index="'/' + user.showUser.user + '/mood'">说说</el-menu-item>
+        <el-menu-item :index="'/' + user.showUser.user + '/blog'">博客</el-menu-item>
+        <el-menu-item :index="'/' + user.showUser.user + '/album'">相册</el-menu-item>
+        <el-menu-item :index="'/' + user.showUser.user + '/message'">留言</el-menu-item>
+        <el-menu-item :index="'/' + user.showUser.user + '/friends'">好友</el-menu-item>
+        <el-menu-item :index="'/' + user.showUser.user + '/profile'">个人档</el-menu-item>
       </el-submenu>
     </el-menu>
     <div class="header-info" v-show="isLogin">
@@ -79,10 +79,8 @@
           }
           if (result.result === '1') {
             this.isLogin = true;
-            this.user.loginUser.user = result.info.user;
-            this.user.loginUser.name = result.info.name;
-            this.user.loginUser.avatar = result.info.avatar;
-            this.user.showUser = (user === '') ? result.info.user : user;
+            this.user.loginUser = result.login;
+            this.user.showUser = (result.isLoginUser) ? result.login : result.user;
             this.user.isLoginUser = result.isLoginUser;
           }
           if (result.result === '-2') {

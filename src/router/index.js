@@ -4,6 +4,7 @@ import Hello from '@/components/Hello';
 import register from '@/components/register/register';
 import page404 from '@/components/404/404';
 import login from '@/components/login/login';
+import home from '@/components/home/home';
 
 Vue.use(Router);
 
@@ -35,7 +36,7 @@ export default new Router({
       path: '/:user',
       name: 'user',
       // 请注意注意注意注意注意，模板必须包含在一个div中
-      component: {template: '<div><div>我的主页</div><router-view></router-view></div>'},
+      component: home,
       children: [
         {
           path: 'mood',
@@ -101,6 +102,11 @@ export default new Router({
           path: 'profile/modify',
           name: 'profileModify',
           component: {template: '<div>修改个人档页面</div>'}
+        },
+        {
+          path: '*',
+          name: '404',
+          component: page404
         }
       ]
     },

@@ -451,11 +451,16 @@
 
           // get body data
           var result = response.body;
-          if (result === '1') {
+          if (result.result === '1') {
             this.step1 = false;
             this.step2 = false;
             this.step3 = false;
             this.rgsSuccess = true;
+            // 存一个self解决vue的变量在setTimeout内部失效的状况
+            var self = this;
+            setTimeout(function () {
+              router.push({path: '/' + self.ruleForm2.user});
+            }, 3000);
           }
         }, response => {
           // error callback
