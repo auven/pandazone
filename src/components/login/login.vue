@@ -2,7 +2,14 @@
   <div>
     <div class="login">
       <el-row>
-        <el-col :span="12"><p>欢迎来到熊猫空间</p></el-col>
+        <el-col :span="12">
+          <div class="welcome">
+            <div class="welcome-main">
+              <div class="title">熊猫空间</div>
+              <div>分享生活，留住感动</div>
+            </div>
+          </div>
+        </el-col>
         <el-col :span="12">
           <div class="login-body" v-show="login">
             <el-form class="loginForm" label-position="left" label-width="60px" :model="loginForm" :rules="loginRules">
@@ -31,7 +38,8 @@
             <el-tabs active-name="first" class="title">
               <el-tab-pane label="验证邮箱" name="first"></el-tab-pane>
             </el-tabs>
-            <el-form class="loginForm" label-position="left" label-width="60px" :model="recoverForm1" :rules="recoverRules1" ref="recoverForm1">
+            <el-form class="loginForm" label-position="left" label-width="60px" :model="recoverForm1"
+                     :rules="recoverRules1" ref="recoverForm1">
               <el-form-item label="账户" prop="user">
                 <el-input v-model="recoverForm1.user"></el-input>
               </el-form-item>
@@ -46,7 +54,8 @@
             <el-tabs active-name="first" class="title">
               <el-tab-pane label="重置密码" name="first"></el-tab-pane>
             </el-tabs>
-            <el-form class="loginForm" label-position="left" label-width="70px" :model="recoverForm2" :rules="recoverRules2" ref="recoverForm2">
+            <el-form class="loginForm" label-position="left" label-width="70px" :model="recoverForm2"
+                     :rules="recoverRules2" ref="recoverForm2">
               <el-form-item label="新密码" prop="pass">
                 <el-input type="password" v-model="recoverForm2.pass"></el-input>
               </el-form-item>
@@ -362,6 +371,19 @@
     /*width: 100%*/
     /*height: 100%*/
     /*background: url(/static/images/72019_top.png) top center no-repeat*/
+    .welcome
+      color: #58B7FF
+      margin: 100px auto
+      position: relative
+      .welcome-main
+        position: absolute
+        left: 50%
+        transform: translate(-50%, 0)
+        font-size: 20px
+        .title
+          margin-bottom: 20px
+          font-size: 50px
+          font-weight: 700
     .login-body, .recoverPass1, .recoverPass2, .success
       box-sizing: border-box
       width: 350px

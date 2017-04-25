@@ -1,9 +1,9 @@
 <template>
   <div id="app">
     <div class="main">
+      <v-header :user="user"></v-header>
       <div class="main-wrapper">
         <div class="main-body">
-          <v-header :user="user"></v-header>
           <div class="main-box">
             <router-view :user="user"></router-view>
           </div>
@@ -62,7 +62,12 @@
     .main-wrapper
       min-height: 100%
       background: url(/static/images/72019_top.png) center 60px no-repeat
+      overflow: hidden
       .main-body
+        max-width: 1226px
+        width: 100%
+        margin: 0 auto
+        margin-top: 60px
         padding-bottom: 170px
         .main-box
           overflow: hidden

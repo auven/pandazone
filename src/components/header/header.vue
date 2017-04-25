@@ -129,6 +129,8 @@
 <style lang="stylus" rel="stylesheet/stylus">
   .header
     width: 100%
+    position: fixed
+    z-index: 100
     .el-menu-header
       color: #ffffff
       background: #20A0FF
