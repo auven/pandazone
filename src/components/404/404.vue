@@ -20,6 +20,7 @@
     position: fixed
     top: 0
     left: 0
+    z-index: 101
     width: 100%
     height: 100%
     background: url("./error_bg.jpg") repeat-x scroll 0 0 #67ACE4

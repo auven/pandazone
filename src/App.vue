@@ -70,10 +70,11 @@
       background: url(/static/images/72019_top.png) center 60px no-repeat
       overflow: hidden
       .main-body
-        max-width: 1226px
-        width: 100%
+        min-width: 960px
         margin: 0 auto
         margin-top: 60px
+        padding-left: 20px
+        padding-right: 20px
         padding-bottom: 170px
         .main-box
           overflow: hidden

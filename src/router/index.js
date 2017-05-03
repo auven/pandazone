@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Hello from '@/components/Hello';
 import register from '@/components/register/register';
 import page404 from '@/components/404/404';
 import login from '@/components/login/login';
@@ -15,7 +14,7 @@ export default new Router({
     {
       path: '/',
       name: 'Hello',
-      component: Hello
+      component: home
     },
     {
       path: '/login',
@@ -105,7 +104,7 @@ export default new Router({
         },
         {
           path: '*',
-          name: '404',
+          name: '4040',
           component: page404
         }
       ]

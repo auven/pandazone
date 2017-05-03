@@ -1,8 +1,8 @@
 <template>
   <div class="home">
     <div class="home-header">
-      <div class="nav-wrapper">
-        <div class="left"><img :src="user.showUser.avatar"></div>
+      <div class="nav-wrapper clearfix">
+        <div class="user-avatar"><img :src="user.showUser.avatar"></div>
         <div class="right">
           <div class="user-name">{{ user.showUser.name }}</div>
           <div class="nav">
@@ -20,7 +20,7 @@
           </div>
         </div>
       </div>
-      <div class="visits">{{ user.showUser.visits }}</div>
+      <div class="visits"><i class="icon-fangwen"></i><span class="count">今日访问：{{ user.showUser.visits }}</span></div>
     </div>
     <div class="home-body">
       <router-view></router-view>
@@ -62,5 +62,59 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-
+  .home
+    .home-header
+      position: relative
+      width: 960px
+      margin: 0 auto
+      .nav-wrapper
+        padding-top: 200px
+        > div
+          float: left
+          height: 130px
+        .user-avatar
+          margin-right: 20px
+          font-size: 0
+          img
+            width: 120px
+            height: 120px
+            border-radius: 2px
+            border: #FFF 3px solid
+            box-shadow: 0 0 1px 1px rgba(0, 0, 0, .1)
+        .right
+          position: relative
+          width: 600px
+          > div
+            position: absolute
+          .user-name
+            bottom: 60px
+            color: #1D8CE0
+            font-size: 20px
+            text-shadow: 1px 1px 1px rgba(0,0,0,.2)
+          .nav
+            bottom: -12px
+      .visits
+        position: absolute
+        right: 0
+        top: 200px
+        height: 30px
+        line-height: 30px
+        font-size: 16px
+        overflow: hidden
+        > i
+          display: inline-block
+          width: 30px
+          height: 30px
+          margin-right: 5px
+          line-height: 30px
+          text-align: center
+          background: #F7BA2A
+          color: #ffffff
+          font-size: 25px
+          border-radius: 50%
+          vertical-align: top /* 解决display:inline-block布局导致错位 */
+        .count
+          display: inline-block
+          vertical-align: top
+          color: #475669
 </style>

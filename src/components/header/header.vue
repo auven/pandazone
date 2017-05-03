@@ -3,7 +3,7 @@
     <el-menu :default-active="activeIndex" class="el-menu-header" mode="horizontal" router="true"
              @select="handleSelect">
       <el-menu-item index="/" class="pandazone">熊猫空间</el-menu-item>
-      <el-menu-item :index="'/' + user.loginUser.user" v-show="isLogin"><span v-show="user.isLoginUser">空间动态</span><span
+      <el-menu-item :index="'/' + user.loginUser.user" v-show="isLogin"><span v-show="user.isLoginUser">我的空间</span><span
         v-show="!user.isLoginUser">返回我的空间</span></el-menu-item>
       <el-submenu index="" v-show="isLogin">
         <template slot="title"><span v-show="user.isLoginUser">我的主页</span><span v-show="!user.isLoginUser">Ta的主页</span>
@@ -72,7 +72,7 @@
           if (result.result === '-1') {
             this.isLogin = false;
 
-            if (this.$route.fullPath !== '/register' && this.$route.fullPath !== '/login') {
+            if (this.$route.fullPath !== '/register' && this.$route.fullPath !== '/login' && this.$route.fullPath !== '/recoverPass') {
               this.$message.warning('您还未登录');
               router.push({name: 'login'});
             }

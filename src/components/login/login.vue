@@ -344,9 +344,11 @@
         if (this.$route.name === 'login') {
           this.login = true;
           this.recoverPass1 = false;
+          this.recoverPass2 = false;
         } else {
           this.login = false;
           this.recoverPass1 = true;
+          this.recoverPass2 = false;
         }
       },
       ceNext() {
