@@ -40,7 +40,7 @@
           <el-upload
             name="avatar"
             class="avatar-uploader"
-            action="/uploadAvatar"
+            action="/uploadTemp"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload">

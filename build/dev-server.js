@@ -43,12 +43,14 @@ app.get('/getCitys',router.getCitys);
 app.get('/getCaptcha',router.getCaptcha);
 app.get('/checkCaptcha',router.checkCaptcha);
 app.get('/findUser/:user',router.findUser);
-app.post('/uploadAvatar',router.uploadAvatar);
+app.post('/uploadTemp',router.uploadTemp);
 app.post('/dologin',router.dologin);
 app.get('/checkEmail/:user/:email',router.checkEmail);
 app.get('/checkLogin',router.checkLogin);
 app.post('/exit',router.exit);
 app.get('/setUser/:user',router.setUser);
+// app.get('/test',router.dlMood);
+app.post('/newMood',router.newMood);
 
 var compiler = webpack(webpackConfig)
 

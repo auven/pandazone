@@ -8,6 +8,8 @@ var fs = require("fs");
 var svgCaptcha = require('svg-captcha');
 
 var User = require('../models/User.js');
+var Log = require('../models/Log.js');
+var Mood = require('../models/Mood.js');
 
 //注册业务
 // exports.doRegist = function (req, res, next) {
@@ -67,18 +69,30 @@ var User = require('../models/User.js');
 exports.doRegist = function (req, res, next) {
   var form = new formidable.IncomingForm();
   form.parse(req, function (err, fields, files) {
+
+    // 先判断upload/avatar文件夹是否存在，不存在就创建
+    var avatarDir = fs.existsSync("./upload/avatar");
+
+    if (!avatarDir) {
+      console.log('创建upload/avatar文件夹');
+      fs.mkdirSync("./upload/avatar");
+    }
+
     //得到表单之后做的事情
     var user = fields.user;
     var name = fields.name;
     var pass = fields.pass;
     var email = fields.email;
-    var avatar = fields.avatar || "moren.jpg";
+    var avatar = fields.avatar ? '/upload/avatar/' + user + '.jpg' : "/upload/avatar/moren.jpg";
     var sex = fields.sex;
     var born = fields.born;
     var city = fields.city;
     var hobby = fields.hobby;
     var label = fields.label;
     var sign = fields.sign;
+
+
+
 
     //查询数据库中是不是有这个人
     User.find({"user": user}, function (err, result) {
@@ -110,6 +124,12 @@ exports.doRegist = function (req, res, next) {
         if (err) {
           res.send("-3"); //服务器错误
           return;
+        }
+        if (fields.avatar) {
+          var oldpath = path.normalize(__dirname + "/.." + fields.avatar);
+          var newName = user + ".jpg";
+          var newpath = path.normalize(__dirname + "/../upload/avatar") + "/" + newName;
+          fs.rename(oldpath, newpath);
         }
         console.log('注册成功');
         req.session.login = user;
@@ -178,36 +198,36 @@ exports.findUser = function (req, res, next) {
   })
 };
 
-// 上传头像
-exports.uploadAvatar = function (req, res, next) {
+// 上传图片
+exports.uploadTemp = function (req, res, next) {
   // 先判断upload/avatar文件夹是否存在，不存在就创建
   var uploadDir = fs.existsSync("./upload");
-  var avatarDir = fs.existsSync("./upload/avatar");
+  var tempDir = fs.existsSync("./upload/temp");
 
   if (!uploadDir) {
     console.log('创建upload文件夹');
     fs.mkdirSync("./upload");
   }
 
-  if (!avatarDir) {
+  if (!tempDir) {
     console.log('创建upload/avatar文件夹');
-    fs.mkdirSync("./upload/avatar");
+    fs.mkdirSync("./upload/temp");
   }
 
 
   var form = new formidable.IncomingForm();
-  form.uploadDir = path.normalize(__dirname + "/../upload/avatar");
+  form.uploadDir = path.normalize(__dirname + "/../upload/temp");
   form.parse(req, function (err, fields, files) {
     // console.log(files);
     var oldpath = files.avatar.path;
     var newName = new Date().getTime() + ".jpg";
-    var newpath = path.normalize(__dirname + "/../upload/avatar") + "/" + newName;
+    var newpath = path.normalize(__dirname + "/../upload/temp") + "/" + newName;
     fs.rename(oldpath, newpath, function (err) {
       if (err) {
         res.send("失败");
         return;
       }
-      res.send({'id': 101, 'path': '/upload/avatar/' + newName});
+      res.send({'id': 101, 'path': '/upload/temp/' + newName});
     });
   });
 };
@@ -231,7 +251,10 @@ exports.dologin = function (req, res, next) {
         // 设置session
         req.session.login = user;
         req.session.user = user;
-        res.json({result: "1", login: {user: user, name: result[0].name, avatar: result[0].avatar, visits: result[0].visits}}); // 登录成功
+        res.json({
+          result: "1",
+          login: {user: user, name: result[0].name, avatar: result[0].avatar, visits: result[0].visits}
+        }); // 登录成功
       } else {
         res.json({result: "-1"}); // 登录失败，密码错误
       }
@@ -277,11 +300,20 @@ exports.checkLogin = function (req, res, next) {
           } else {
             isLoginUser = false;
 
-            res.json({result: "1", login: {user: login, name: result[0].name, avatar: result[0].avatar, visits: result[0].visits}, user: {user: user, name: result1[0].name, avatar: result1[0].avatar, visits: result1[0].visits}, isLoginUser: isLoginUser});
+            res.json({
+              result: "1",
+              login: {user: login, name: result[0].name, avatar: result[0].avatar, visits: result[0].visits},
+              user: {user: user, name: result1[0].name, avatar: result1[0].avatar, visits: result1[0].visits},
+              isLoginUser: isLoginUser
+            });
           }
         });
       } else {
-        res.json({result: "1", login: {user: login, name: result[0].name, avatar: result[0].avatar, visits: result[0].visits}, isLoginUser: isLoginUser});
+        res.json({
+          result: "1",
+          login: {user: login, name: result[0].name, avatar: result[0].avatar, visits: result[0].visits},
+          isLoginUser: isLoginUser
+        });
       }
     });
   } else {
@@ -311,4 +343,106 @@ exports.setUser = function (req, res, next) {
       res.json({result: "-1"}); // 验证失败，邮箱错误
     }
   })
+};
+
+// 新建说说
+exports.newMood = function (req, res, next) {
+
+  var form = new formidable.IncomingForm();
+  form.parse(req, function (err, fields, files) {
+
+    var moodText = fields.moodText;
+    var moodImg = fields.moodImg;
+    var user = fields.user;
+    var name = fields.name;
+    var time = (new Date()).getTime();
+
+    Mood.create({
+      time: time,
+      user: user,
+      name: name,
+      body: {
+        text: moodText,
+        img: moodImg
+      }
+    }, function (err, mood) {
+      if (err) {
+        res.json({result: "-3"}); //服务器错误
+        return;
+      }
+      Log.create({
+        type: 'mood',
+        time: time,
+        user: user,
+        name: name,
+        body: mood._id
+      }, function (err1, log) {
+        if (err1) {
+          res.json({result: "-3"}); //服务器错误
+          return;
+        }
+        console.log('发表成功');
+        res.json({result: '1'});
+      });
+    })
+
+  });
+
+};
+
+// 删除说说
+exports.dlMood = function (req, res, next) {
+  Mood.remove({ _id: '590b5b87b428220300886bfe'}, function (err) {
+    if (err) {
+      res.send("-3"); //删除失败
+      return;
+    }
+    Log.remove({ body: '590b5b87b428220300886bfe'}, function (err1) {
+      if (err1) {
+        res.send("-3"); //删除失败
+        return;
+      }
+      console.log('删除成功');
+      res.send('删除成功');
+    })
+  });
+};
+
+// 添加说说评论
+exports.addMoodComment = function (req, res, next) {
+  var pinglun = {
+    moodId: '590b4af6b5002c025778586b',
+    body: {
+      user: 'auven',
+      name: '张剑',
+      time: (new Date()).getTime(),
+      content: '通过_id来评论'
+    }
+  };
+
+  Mood.pinglun(pinglun, function (err) {
+    if (err) {
+      res.send("-3"); //服务器错误
+      return;
+    }
+    console.log('评论成功');
+    res.send('评论成功');
+  });
+};
+
+// 删除说说评论
+exports.dlMoodComment = function (req, res, next) {
+  var pinglun = {
+    moodId: '590b4af6b5002c025778586b',
+    plId: '590b51d2510008029b2b9dc1'
+  };
+
+  Mood.dlPinglun(pinglun, function (err) {
+    if (err) {
+      res.send("-3"); //服务器错误
+      return;
+    }
+    console.log('删除评论成功');
+    res.send('删除评论成功');
+  });
 };

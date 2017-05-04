@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <el-menu :default-active="activeIndex" class="el-menu-header" mode="horizontal" router="true"
+    <el-menu :default-active="activeIndex" class="el-menu-header" mode="horizontal" :router="true"
              @select="handleSelect">
       <el-menu-item index="/" class="pandazone">熊猫空间</el-menu-item>
       <el-menu-item :index="'/' + user.loginUser.user" v-show="isLogin"><span v-show="user.isLoginUser">我的空间</span><span

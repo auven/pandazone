@@ -4,6 +4,7 @@ import register from '@/components/register/register';
 import page404 from '@/components/404/404';
 import login from '@/components/login/login';
 import home from '@/components/home/home';
+import index from '@/components/index/index';
 
 Vue.use(Router);
 
@@ -13,8 +14,15 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Hello',
-      component: home
+      name: '',
+      component: home,
+      children: [
+        {
+          path: '',
+          name: 'index',
+          component: index
+        }
+      ]
     },
     {
       path: '/login',
