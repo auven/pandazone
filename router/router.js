@@ -249,8 +249,10 @@ exports.dologin = function (req, res, next) {
       }
       if (result.length !== 0) {
         // 设置session
-        req.session.login = user;
-        req.session.user = user;
+        req.session.login = {
+          user: user,
+          name: result[0].name
+        };
         res.json({
           result: "1",
           login: {user: user, name: result[0].name, avatar: result[0].avatar, visits: result[0].visits}
@@ -287,7 +289,7 @@ exports.checkLogin = function (req, res, next) {
   var login = req.session.login || '';
   if (login !== '') {
 
-    User.find({"user": login}, 'name avatar visits', function (err, result) {
+    User.find({"user": login.user}, 'name avatar visits', function (err, result) {
       if (err) {
         res.json({result: "-3"}); // 服务器错误
         return;
@@ -348,14 +350,36 @@ exports.setUser = function (req, res, next) {
 // 新建说说
 exports.newMood = function (req, res, next) {
 
+  // 先判断upload/moodImg文件夹是否存在，不存在就创建
+  var avatarDir = fs.existsSync("./upload/moodImg");
+
+  if (!avatarDir) {
+    console.log('创建upload/moodImg文件夹');
+    fs.mkdirSync("./upload/moodImg");
+  }
+
   var form = new formidable.IncomingForm();
   form.parse(req, function (err, fields, files) {
 
+    var time = (new Date()).getTime();
+    var user = req.session.login.user;
+    var name = req.session.login.name;
     var moodText = fields.moodText;
     var moodImg = fields.moodImg;
-    var user = fields.user;
-    var name = fields.name;
-    var time = (new Date()).getTime();
+    if (moodImg.length) {
+      console.log('有图片');
+      for (var i = 0; i < moodImg.length; i++) {
+        console.log(moodImg[i]);
+        var oldpath = path.normalize(__dirname + "/.." + moodImg[i]);
+        var newName = time + '(' + i + ')' + ".jpg";
+        console.log(newName);
+        var newpath = path.normalize(__dirname + "/../upload/moodImg") + "/" + newName;
+        fs.renameSync(oldpath, newpath);
+        moodImg[i] = "/upload/moodImg/" + newName;
+      }
+    }
+
+
 
     Mood.create({
       time: time,

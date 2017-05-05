@@ -7,18 +7,21 @@
       placeholder="说点儿什么吧"
       v-model="moodText">
     </el-input>
-    <el-upload
-      v-show="showAddImg"
-      list-type="picture-card"
-      class="addImg"
-      ref="upload"
-      name="avatar"
-      action="/uploadTemp"
-      :on-change="handleChange"
-      :on-preview="handlePreview"
-      :on-remove="handleRemove">
-      <i class="el-icon-plus"></i>
-    </el-upload>
+    <transition name="addImgFade">
+      <el-upload
+        v-show="showAddImg"
+        list-type="picture-card"
+        class="addImg"
+        ref="upload"
+        name="avatar"
+        action="/uploadTemp"
+        :file-list="moodImg"
+        :on-change="handleChange"
+        :on-preview="handlePreview"
+        :on-remove="handleRemove">
+        <i class="el-icon-plus"></i>
+      </el-upload>
+    </transition>
     <div class="moodSubmit">
       <el-button class="btn" type="primary" @click="newMoodSubmit">发表</el-button>
       <i class="el-icon-picture showAddImg" @click="showAI"></i>
@@ -37,7 +40,20 @@
     },
     methods: {
       newMoodSubmit() {
-        this.$refs.upload.submit();
+        this.$http.post('/newMood', {
+          moodText: this.moodText,
+          moodImg: this.moodImg
+        }).then(response => {
+          var result = response.body;
+          if (result.result === '1') {
+            this.$message.success('发表说说成功');
+            this.moodText = '';
+            this.moodImg = [];
+            this.showAddImg = false;
+          }
+        }, response => {
+          // error callback
+        });
       },
       handleRemove(file, fileList) {
         var index = this.moodImg.indexOf(file.response.path);
@@ -54,6 +70,7 @@
         console.log(this.moodImg);
       },
       showAI() {
+        this.moodImg = [];
         this.showAddImg = !this.showAddImg;
       }
     }
@@ -70,6 +87,10 @@
         border: none
     .addImg
       margin: 15px 10px 50px 10px
+      &.addImgFade-enter-active, &.addImgFade-leave-active
+        transition: opacity .5s
+      &.addImgFade-enter, &.addImgFade-leave-active
+        opacity: 0
     .moodSubmit
       overflow: hidden
       margin: 10px
