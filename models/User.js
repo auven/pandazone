@@ -6,7 +6,7 @@ var db = require("./dbs.js");
 
 var messageSchema = new mongoose.Schema({
   author    :   {type : String},
-  time      :   {type : String},
+  time      :   {type : Number},
   content   :   {type : String}
 });
 

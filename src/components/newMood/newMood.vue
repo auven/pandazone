@@ -79,6 +79,8 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
   .newMood
+    box-sizing: border-box
+    padding: 16px
     overflow: hidden
     width: 590px
     background: #ffffff
@@ -86,14 +88,14 @@
       textarea
         border: none
     .addImg
-      margin: 15px 10px 50px 10px
+      margin: 0 0 50px 0
       &.addImgFade-enter-active, &.addImgFade-leave-active
         transition: opacity .5s
       &.addImgFade-enter, &.addImgFade-leave-active
         opacity: 0
     .moodSubmit
       overflow: hidden
-      margin: 10px
+      margin: 10px 0
       .btn, .showAddImg
         float: right
       .showAddImg

@@ -251,7 +251,8 @@ exports.dologin = function (req, res, next) {
         // 设置session
         req.session.login = {
           user: user,
-          name: result[0].name
+          name: result[0].name,
+          avatar: result[0].avatar
         };
         res.json({
           result: "1",
@@ -295,7 +296,7 @@ exports.checkLogin = function (req, res, next) {
         return;
       }
       var isLoginUser = true;
-      if (user !== '' && user !== login) {
+      if (user !== '' && user !== login.user) {
         User.find({"user": user}, 'name avatar visits', function (err, result1) {
           if (result1.length === 0) {
             res.json({result: "-2"}); // 没有这个用户
@@ -304,7 +305,7 @@ exports.checkLogin = function (req, res, next) {
 
             res.json({
               result: "1",
-              login: {user: login, name: result[0].name, avatar: result[0].avatar, visits: result[0].visits},
+              login: {user: login.user, name: result[0].name, avatar: result[0].avatar, visits: result[0].visits},
               user: {user: user, name: result1[0].name, avatar: result1[0].avatar, visits: result1[0].visits},
               isLoginUser: isLoginUser
             });
@@ -313,7 +314,7 @@ exports.checkLogin = function (req, res, next) {
       } else {
         res.json({
           result: "1",
-          login: {user: login, name: result[0].name, avatar: result[0].avatar, visits: result[0].visits},
+          login: {user: login.user, name: result[0].name, avatar: result[0].avatar, visits: result[0].visits},
           isLoginUser: isLoginUser
         });
       }
@@ -364,6 +365,7 @@ exports.newMood = function (req, res, next) {
     var time = (new Date()).getTime();
     var user = req.session.login.user;
     var name = req.session.login.name;
+    var avatar = req.session.login.avatar;
     var moodText = fields.moodText;
     var moodImg = fields.moodImg;
     if (moodImg.length) {
@@ -385,6 +387,7 @@ exports.newMood = function (req, res, next) {
       time: time,
       user: user,
       name: name,
+      avatar: avatar,
       body: {
         text: moodText,
         img: moodImg
@@ -399,6 +402,7 @@ exports.newMood = function (req, res, next) {
         time: time,
         user: user,
         name: name,
+        avatar: avatar,
         body: mood._id
       }, function (err1, log) {
         if (err1) {
@@ -469,4 +473,29 @@ exports.dlMoodComment = function (req, res, next) {
     console.log('删除评论成功');
     res.send('删除评论成功');
   });
+};
+
+// 获取空间动态
+exports.getStatus = function (req, res, next) {
+  var obj = {
+    user: ['auven', 'gyt'],
+    type: 'album'
+  };
+
+  Log.getStatus(obj, function (err, logs) {
+    res.send(logs);
+  })
+};
+
+exports.newLog = function (req, res, next) {
+  Log.create({
+    type: 'album',
+    time: (new Date()).getTime(),
+    user: 'gyt',
+    name: '高玉婷',
+    avatar: 'aksdjkasdas',
+    body: '590b4af6b5002c025778586b'
+  },function (err, log) {
+    res.send('插入成功');
+  })
 };

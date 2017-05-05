@@ -7,7 +7,8 @@ var db = require("./dbs.js");
 var commentSchema = new mongoose.Schema({
   user: String,
   name: String,
-  time: String,
+  avatar: String,
+  time: Number,
   content: String
 });
 
@@ -17,9 +18,10 @@ var thumbsUpSchema = new mongoose.Schema({
 });
 
 var moodSchema = new mongoose.Schema({
-  time      :   {type : String},
+  time      :   {type : Number},
   user      :   {type : String},
   name      :   {type : String},
+  avatar    :   {type : String},
   body      :   { text: String, img: [String] },
   comments   :   [commentSchema],
   thumbsUp  :   [thumbsUpSchema]

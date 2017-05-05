@@ -49,7 +49,7 @@ app.get('/checkEmail/:user/:email',router.checkEmail);
 app.get('/checkLogin',router.checkLogin);
 app.post('/exit',router.exit);
 app.get('/setUser/:user',router.setUser);
-// app.get('/test',router.dlMood);
+app.get('/test',router.getStatus);
 app.post('/newMood',router.newMood);
 
 var compiler = webpack(webpackConfig)
