@@ -2,23 +2,23 @@
   <div class="status">
     <div class="status-user">
       <div class="avatar">
-        <img :src="statu.avatar">
+        <img :src="status.avatar">
       </div>
       <div class="info">
         <div class="name">
-          <router-link :to="'/' + statu.user">{{ statu.name }}</router-link>
+          <router-link :to="'/' + status.user">{{ status.name }}</router-link>
         </div>
-        <div class="time">{{ statu.time }}</div>
+        <div class="time">{{ status.time }}</div>
       </div>
     </div>
     <div class="status-body">
-      <div class="moodBody" v-if="statu.type === 'mood'">
-        <div class="text">{{ statu.body.text }}</div>
-        <div :class="imgBoxClass + ' img-box-hook'" v-if="statu.body.img.length > 0">
-          <div class="imgItem" v-for="img in statu.body.img">
+      <div class="moodBody" v-if="status.type === 'mood'">
+        <div class="text">{{ status.body.text }}</div>
+        <div :class="imgBoxClass + ' img-box-hook'" v-if="status.body.img.length > 0">
+          <div class="imgItem" v-for="img in status.body.img">
             <img :src="img">
           </div>
-          <!--<img class="preview-img" v-for="(img, index) in statu.body.img" :src="img" height="100" @click="$preview.open(index, statu.body.img)">-->
+          <!--<img class="preview-img" v-for="(img, index) in status.body.img" :src="img" height="100" @click="$preview.open(index, status.body.img)">-->
         </div>
       </div>
     </div>
@@ -28,13 +28,13 @@
     </div>
     <div class="thumbs-up">
       <i class="icon-dianzan"></i>
-      <span v-for="user in statu.thumbsUp"><router-link :to="'/' + user.user">{{ user.name }}</router-link><span
-        v-if="statu.thumbsUp.indexOf(user) !== statu.thumbsUp.length - 1">、</span></span>
-      共<span>{{ statu.thumbsUp.length }}</span>人觉得很赞
+      <span v-for="user in status.thumbsUp"><router-link :to="'/' + user.user">{{ user.name }}</router-link><span
+        v-if="status.thumbsUp.indexOf(user) !== status.thumbsUp.length - 1">、</span></span>
+      共<span>{{ status.thumbsUp.length }}</span>人觉得很赞
 
     </div>
     <div class="comment">
-      <div class="item" v-for="comment in statu.comments">
+      <div class="item" v-for="comment in status.comments">
         <div class="avatar"><img :src="comment.avatar"></div>
         <div class="wrap">
           <div class="content">
@@ -56,7 +56,7 @@
 
   export default {
     props: {
-      statu: {
+      status: {
         type: Object
       }
     },
@@ -65,20 +65,30 @@
     },
     created() {
     },
+    watch: {
+      status: function () {
+        // this.$nextTick() 里面的函数在DOM渲染后执行
+        // 放在这里才能取到dom
+        this.$nextTick(function () {
+          this.initImgbox();
+          this.setPswp();
+        });
+      }
+    },
     mounted() {
       // 放在这里才能取到dom
-      this.initImgbox();
-      this.setPswp();
+//      this.initImgbox();
+//      this.setPswp();
     },
     computed: {
       imgBoxClass: function () {
-        if (this.statu.body.img.length === 1) {
+        if (this.status.body.img.length === 1) {
           return 'imgBox-1';
         }
-        if (this.statu.body.img.length === 2) {
+        if (this.status.body.img.length === 2) {
           return 'imgBox-2';
         }
-        if (this.statu.body.img.length === 3) {
+        if (this.status.body.img.length === 3) {
           return 'imgBox-3';
         }
       }

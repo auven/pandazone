@@ -23,7 +23,7 @@
       <div class="visits"><i class="icon-fangwen"></i><span class="count">今日访问：{{ user.showUser.visits }}</span></div>
     </div>
     <div class="home-body">
-      <router-view></router-view>
+      <router-view :user="user"></router-view>
     </div>
   </div>
 </template>

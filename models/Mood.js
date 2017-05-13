@@ -18,6 +18,7 @@ var thumbsUpSchema = new mongoose.Schema({
 });
 
 var moodSchema = new mongoose.Schema({
+  type      :   {type : String, default: 'mood'},
   time      :   {type : Number},
   user      :   {type : String},
   name      :   {type : String},

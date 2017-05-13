@@ -51,6 +51,7 @@ app.post('/exit',router.exit);
 app.get('/setUser/:user',router.setUser);
 app.get('/test',router.getStatus);
 app.post('/newMood',router.newMood);
+app.get('/getStatus',router.getStatus);
 
 var compiler = webpack(webpackConfig)
 

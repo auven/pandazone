@@ -477,14 +477,56 @@ exports.dlMoodComment = function (req, res, next) {
 
 // 获取空间动态
 exports.getStatus = function (req, res, next) {
+  var query = req.query; // 有user、all（是否显示所有好友的）、type
+
+  console.log(query);
+
   var obj = {
-    user: ['auven', 'gyt'],
-    type: 'album'
+    user: [query.user],
+    type: query.type
   };
 
-  Log.getStatus(obj, function (err, logs) {
-    res.send(logs);
-  })
+  var status = [];
+
+  if (query.all === 'true') {
+    console.log(query.all);
+
+    User.find({user: query.user}, 'friends', function (err, data) {
+      if (err) {
+        res.send('-3'); // 查询数据库出错
+        return;
+      }
+
+      for (var i = 0; i < data[0].friends.length; i++) {
+        obj.user.push(data[0].friends[i].user);
+      }
+      // obj.user.push.apply(obj.user, data.friends); // 合并数组
+
+      // console.log(data[0].friends);
+
+      Log.getStatus(obj, function (err, logs) {
+        // res.send(logs);
+
+        (function iterator(i) {
+          //遍历结束
+          if (i === logs.length) {
+            console.log('遍历完成');
+            res.json({
+              result: '1',
+              status: status
+            });
+            return;
+          }
+          if (logs[i].type === 'mood') {
+            Mood.findById(logs[i].body, function (err, mood) {
+              status.push(mood);
+              iterator(i + 1);
+            })
+          }
+        })(0);
+      })
+    })
+  }
 };
 
 exports.newLog = function (req, res, next) {
