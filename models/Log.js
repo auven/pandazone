@@ -18,6 +18,8 @@ logSchema.statics.getStatus = function (obj, callback) {
   if (obj.type === 'all') {
     this.model('Log')
       .find({user: {'$in': obj.user}})
+      .skip(obj.page*(-(-obj.pageSize)))
+      .limit((-(-obj.pageSize)))
       .sort('-time')
       .select('type body')
       .exec(callback);
@@ -26,6 +28,18 @@ logSchema.statics.getStatus = function (obj, callback) {
       .find({user: {'$in': obj.user}, type: obj.type})
       .sort('-time')
       .select('type body')
+      .exec(callback);
+  }
+};
+
+logSchema.statics.getTotal = function (obj, callback) {
+  if (obj.type === 'all') {
+    this.model('Log')
+      .find({user: {'$in': obj.user}})
+      .exec(callback);
+  } else {
+    this.model('Log')
+      .find({user: {'$in': obj.user}, type: obj.type})
       .exec(callback);
   }
 };

@@ -483,7 +483,9 @@ exports.getStatus = function (req, res, next) {
 
   var obj = {
     user: [query.user],
-    type: query.type
+    type: query.type,
+    page: query.page-1,
+    pageSize: query.pageSize
   };
 
   var status = [];
@@ -504,27 +506,30 @@ exports.getStatus = function (req, res, next) {
 
       // console.log(data[0].friends);
 
-      Log.getStatus(obj, function (err, logs) {
-        // res.send(logs);
+      Log.getTotal(obj, function (err, total) {
+        Log.getStatus(obj, function (err, logs) {
+          // res.send(logs);
 
-        (function iterator(i) {
-          //遍历结束
-          if (i === logs.length) {
-            console.log('遍历完成');
-            res.json({
-              result: '1',
-              status: status
-            });
-            return;
-          }
-          if (logs[i].type === 'mood') {
-            Mood.findById(logs[i].body, function (err, mood) {
-              status.push(mood);
-              iterator(i + 1);
-            })
-          }
-        })(0);
-      })
+          (function iterator(i) {
+            //遍历结束
+            if (i === logs.length) {
+              console.log('遍历完成');
+              res.json({
+                result: '1',
+                status: status,
+                total: total.length
+              });
+              return;
+            }
+            if (logs[i].type === 'mood') {
+              Mood.findById(logs[i].body, function (err, mood) {
+                status.push(mood);
+                iterator(i + 1);
+              })
+            }
+          })(0);
+        })
+      });
     })
   }
 };

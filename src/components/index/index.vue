@@ -5,6 +5,17 @@
       <div v-for="status in statusData">
         <status :status="status"></status>
       </div>
+      <div class="block">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[5, 10, 15, 20]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total">
+        </el-pagination>
+      </div>
     </div>
     <div class="right">
 
@@ -18,6 +29,7 @@
   import PhotoSwipe from 'photoswipe/dist/photoswipe.min';
   import PhotoSwipeUI from 'photoswipe/dist/photoswipe-ui-default.min';
   import $ from 'jquery';
+  import router from '../../router';
 
   export default {
     props: {
@@ -27,39 +39,49 @@
     },
     data() {
       return {
-        statusData: []
+        statusData: [],
+        total: 0,
+        currentPage: 1,
+        pageSize: 10
       };
     },
     components: {
       newMood,
       status
     },
+    created() {
+      if (this.$route.query.page) {
+        this.currentPage = -(-this.$route.query.page); // 将字符串转为数字
+      }
+    },
     mounted() {
       this.getStatus();
     },
-    updated() {
-      // 放在这里才能取到dom
-      // this.$nextTick 等dom完全加载完执行
-      this.$nextTick(function () {
-        console.log('this.$nextTick 等dom加载完成就执行');
-        this.initImgbox();
-        this.setPswp();
-      });
+    watch: {
+      statusData: function () {
+        this.$nextTick(function () {
+          console.log('this.$nextTick 等dom加载完成就执行');
+          this.initImgbox();
+          this.setPswp();
+        });
 
-      console.log('没等dom加载完成就执行');
+        console.log('没等dom加载完成就执行');
+      }
     },
     methods: {
       getStatus() {
         // 使用定时的方式来获取props
         var self = this;
         self.pdzTimer.getStatus = setInterval(function () {
-          console.log('hahafdfgdgdfgfsddfgj', self.user.loginUser.user);
+          var page = self.$route.query.page || 1;
+          console.log('hahafdfgdgdfgfsddfgj', self.user.loginUser.user, page);
           if (self.user.loginUser.user) {
             clearInterval(self.pdzTimer.getStatus);
-            self.$http.get('/getStatus?user=' + self.user.loginUser.user + '&all=true&' + 'type=all').then(response => {
+            self.$http.get('/getStatus?user=' + self.user.loginUser.user + '&all=true&' + 'type=all&' + 'page=' + page + '&pageSize=' + self.pageSize).then(response => {
               var result = response.body;
               if (result.result === '1') {
                 self.statusData = result.status;
+                self.total = result.total;
               }
             }, response => {
               // error callback
@@ -318,6 +340,19 @@
 
         // execute above function
         initPhotoSwipeFromDOM('.mood-img-box-hook');
+      },
+      handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+        this.pageSize = val;
+        this.getStatus();
+      },
+      handleCurrentChange(val) {
+        // 这里不清除会一直循环
+        if (this.pdzTimer.getStatus) {
+          clearInterval(this.pdzTimer.getStatus);
+        }
+        router.push({path: '/', query: {page: val}});
+        this.getStatus();
       }
     }
   };
