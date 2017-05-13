@@ -65,20 +65,10 @@
     },
     created() {
     },
-    watch: {
-      status: function () {
-        // this.$nextTick() 里面的函数在DOM渲染后执行
-        // 放在这里才能取到dom
-        this.$nextTick(function () {
-          this.initImgbox();
-          this.setPswp();
-        });
-      }
-    },
     mounted() {
       // 放在这里才能取到dom
-//      this.initImgbox();
-//      this.setPswp();
+      this.initImgbox();
+      this.setPswp();
     },
     computed: {
       imgBoxClass: function () {
@@ -391,11 +381,12 @@
         .text
           margin-bottom: 12px
         .imgBox-1
-          height: 300px
           .imgItem
+            height: 300px
+            overflow: hidden
             img
-              max-width: 100%
-              max-height: 100%
+                max-width: 100%
+                max-height: 100%
         .imgBox-2
           .imgItem
             overflow: hidden
