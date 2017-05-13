@@ -74,6 +74,11 @@
 
             if (this.$route.fullPath !== '/register' && this.$route.fullPath !== '/login' && this.$route.fullPath !== '/recoverPass') {
               this.$message.warning('您还未登录');
+              console.log('this.pdzTimer.getStatus: ' + this.pdzTimer.getStatus);
+              // 清除定时器
+              if (this.pdzTimer.getStatus) {
+                clearInterval(this.pdzTimer.getStatus);
+              }
               router.push({name: 'login'});
             }
           }

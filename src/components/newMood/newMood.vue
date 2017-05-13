@@ -50,6 +50,8 @@
             this.moodText = '';
             this.moodImg = [];
             this.showAddImg = false;
+            // 触发父组件里的方法
+            this.$emit('subNewMood');
           }
         }, response => {
           // error callback
@@ -82,7 +84,6 @@
     box-sizing: border-box
     padding: 16px
     overflow: hidden
-    width: 590px
     background: #ffffff
     .moodText
       textarea

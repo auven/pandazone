@@ -14,6 +14,9 @@ Vue.use(VueResource);
 
 Vue.config.productionTip = false;
 
+// 定义全局变量
+Vue.prototype.pdzTimer = {};
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
