@@ -8,7 +8,7 @@
         <div class="name">
           <router-link :to="'/' + status.user">{{ status.name }}</router-link>
         </div>
-        <div class="time">{{ status.time }}</div>
+        <div class="time">{{ this.moment(status.time).format('YYYY年MM月DD日 HH:mm') }}</div>
       </div>
     </div>
     <div class="status-body">
@@ -49,6 +49,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "moment" }] */
   export default {
     props: {
       status: {

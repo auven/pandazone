@@ -14,6 +14,7 @@
         class="addImg"
         ref="upload"
         name="avatar"
+        :auto-upload="true"
         action="/uploadTemp"
         :file-list="moodImg"
         :on-change="handleChange"
@@ -40,6 +41,11 @@
     },
     methods: {
       newMoodSubmit() {
+        if (this.moodText === '' && this.moodImg === []) {
+          this.$message.warning('别调皮，你都还没写东西，发表啥！！！');
+          return;
+        }
+
         this.$http.post('/newMood', {
           moodText: this.moodText,
           moodImg: this.moodImg
@@ -66,8 +72,11 @@
         console.log(file);
       },
       handleChange(file, fileList) {
+        console.log(fileList);
         for (var i = 0; i < fileList.length; i++) {
-          this.moodImg[i] = fileList[i].response.path;
+          if (fileList[i].response) {
+            this.moodImg[i] = fileList[i].response.path;
+          }
         }
         console.log(this.moodImg);
       },

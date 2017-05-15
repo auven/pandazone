@@ -6,6 +6,7 @@ import 'element-ui/lib/theme-default/index.css';
 import VueResource from 'vue-resource';
 import App from './App';
 import router from './router';
+import moment from 'moment';
 
 import './common/stylus/index.styl';
 
@@ -16,6 +17,7 @@ Vue.config.productionTip = false;
 
 // 定义全局变量
 Vue.prototype.pdzTimer = {};
+Vue.prototype.moment = moment;
 
 /* eslint-disable no-new */
 new Vue({

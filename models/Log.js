@@ -6,7 +6,7 @@ var db = require("./dbs.js");
 
 var logSchema = new mongoose.Schema({
   type      :   {type : String},
-  time      :   {type : Number},
+  time      :   {type : Date},
   user      :   {type : String},
   name      :   {type : String},
   avatar    :   {type : String},

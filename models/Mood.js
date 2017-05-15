@@ -8,7 +8,7 @@ var commentSchema = new mongoose.Schema({
   user: String,
   name: String,
   avatar: String,
-  time: Number,
+  time: Date,
   content: String
 });
 
@@ -19,7 +19,7 @@ var thumbsUpSchema = new mongoose.Schema({
 
 var moodSchema = new mongoose.Schema({
   type      :   {type : String, default: 'mood'},
-  time      :   {type : Number},
+  time      :   {type : Date},
   user      :   {type : String},
   name      :   {type : String},
   avatar    :   {type : String},

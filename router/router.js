@@ -362,7 +362,7 @@ exports.newMood = function (req, res, next) {
   var form = new formidable.IncomingForm();
   form.parse(req, function (err, fields, files) {
 
-    var time = (new Date()).getTime();
+    var time = new Date();
     var user = req.session.login.user;
     var name = req.session.login.name;
     var avatar = req.session.login.avatar;
@@ -373,7 +373,7 @@ exports.newMood = function (req, res, next) {
       for (var i = 0; i < moodImg.length; i++) {
         console.log(moodImg[i]);
         var oldpath = path.normalize(__dirname + "/.." + moodImg[i]);
-        var newName = time + '(' + i + ')' + ".jpg";
+        var newName = time.getTime() + '(' + i + ')' + ".jpg";
         console.log(newName);
         var newpath = path.normalize(__dirname + "/../upload/moodImg") + "/" + newName;
         fs.renameSync(oldpath, newpath);
