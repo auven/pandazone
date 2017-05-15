@@ -8,7 +8,7 @@
         <div class="name">
           <router-link :to="'/' + status.user">{{ status.name }}</router-link>
         </div>
-        <div class="time">{{ this.moment(status.time).format('YYYY年MM月DD日 HH:mm') }}</div>
+        <div class="time">{{ moment(status.time).format('YYYY年MM月DD日 HH:mm') }}&nbsp;&nbsp;&nbsp;&nbsp;<span class="delete" v-show="status.user === user.loginUser.user" @click="dls({id: status._id, type: status.type})">删除</span></div>
       </div>
     </div>
     <div class="status-body">
@@ -22,14 +22,25 @@
       </div>
     </div>
     <div class="status-op">
-      <i class="icon-dianzan"></i>
-      <i class="icon-pinglun"></i>
+      <i :class="'icon-dianzan' + hasClass" @click="thumbsUp({id: status._id, type: status.type})"></i>
+      <i class="icon-pinglun" @click="snc"></i>
+    </div>
+    <div class="newComment" v-show="showNewComment">
+      <el-input
+        class="content"
+        type="textarea"
+        :autosize="{ minRows: 1, maxRows: 4}"
+        placeholder="我也说一句"
+        v-model="content">
+      </el-input>
+      <el-button class="sbmContent" type="primary" size="mini" @click="comment({id: status._id, type: status.type})">评论</el-button>
     </div>
     <div class="thumbs-up">
       <i class="icon-dianzan"></i>
       <span v-for="user in status.thumbsUp"><router-link :to="'/' + user.user">{{ user.name }}</router-link><span
         v-if="status.thumbsUp.indexOf(user) !== status.thumbsUp.length - 1">、</span></span>
       共<span>{{ status.thumbsUp.length }}</span>人觉得很赞
+
 
     </div>
     <div class="comment">
@@ -40,8 +51,9 @@
             <router-link :to="'/' + comment.user" class="name">{{ comment.name }}</router-link>&nbsp;：{{ comment.content
             }}
 
+
           </div>
-          <div class="time">{{ comment.time }}</div>
+          <div class="time">{{ moment(comment.time).format('YYYY年MM月DD日 HH:mm') }}&nbsp;&nbsp;&nbsp;&nbsp;<span class="delete" v-show="comment.user === user.loginUser.user" @click="dlComment({id: status._id, type: status.type, comment: comment})">删除</span></div>
         </div>
       </div>
     </div>
@@ -49,15 +61,21 @@
 </template>
 
 <script type="text/ecmascript-6">
-  /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "moment" }] */
+  /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "response" }] */
   export default {
     props: {
       status: {
         type: Object
+      },
+      user: {
+        type: Object
       }
     },
     data() {
-      return {};
+      return {
+        content: '',
+        showNewComment: false
+      };
     },
     created() {
     },
@@ -74,9 +92,116 @@
         if (this.status.body.img.length === 3) {
           return 'imgBox-3';
         }
+      },
+      hasThumbsUp: function () {
+        var flag = false;
+        for (var i = 0; i < this.status.thumbsUp.length; i++) {
+          if (this.status.thumbsUp[i].user === this.user.loginUser.user) {
+            flag = true;
+            break;
+          }
+        }
+        return flag;
+      },
+      hasClass: function () {
+        if (this.hasThumbsUp) {
+          return ' has';
+        } else {
+          return '';
+        }
       }
     },
     methods: {
+      dls(op) {
+        console.log(op);
+        if (op.type === 'mood') {
+          this.$confirm('此操作将永久删除该说说, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$http.post('/dlMood', {
+              id: op.id
+            }).then(response => {
+              var result = response.body;
+              if (result.result === '1') {
+                this.$message.success('删除说说成功');
+                this.$emit('refresh');
+              }
+            });
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            });
+          });
+        }
+      },
+      thumbsUp(op) {
+        console.log(op);
+        if (op.type === 'mood') {
+          this.$http.post('/thumbsUp', {
+            moodId: op.id,
+            status: this.hasThumbsUp
+          }).then(response => {
+            var result = response.body;
+            if (result.result === '1') {
+              // this.$message.success('点赞成功');
+              this.$emit('refresh');
+            }
+          });
+        }
+      },
+      comment(op) {
+        console.log(op, this.content);
+        if (this.content === '') {
+          this.$message.warning('别调皮，你都还没写东西，发表啥！！！');
+          return;
+        }
+        if (op.type === 'mood') {
+          this.$http.post('/addMoodComment', {
+            moodId: op.id,
+            content: this.content
+          }).then(response => {
+            var result = response.body;
+            if (result.result === '1') {
+              this.$message.success('发表pinglun成功');
+              this.$emit('refresh');
+              this.content = '';
+              this.showNewComment = false;
+            }
+          });
+        }
+      },
+      snc() {
+        this.showNewComment = !this.showNewComment;
+      },
+      dlComment(obj) {
+        console.log(obj);
+        if (obj.type === 'mood') {
+          this.$confirm('此操作将永久删除该评论, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$http.post('/dlMoodComment', {
+              moodId: obj.id,
+              comment: obj.comment
+            }).then(response => {
+              var result = response.body;
+              if (result.result === '1') {
+                this.$message.success('删除说说成功');
+                this.$emit('refresh');
+              }
+            });
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            });
+          });
+        }
+      }
     }
   };
 </script>
@@ -118,6 +243,11 @@
           font-size: 13px
           font-weight: normal
           color: #99a9bf
+          .delete
+            cursor: pointer
+            &:hover
+              color: #FF4949
+              text-decoration: underline
     .status-body
       font-size: 15px
       font-weight: normal
@@ -128,8 +258,8 @@
           .imgItem
             overflow: hidden
             img
-                max-width: 100%
-                max-height: 300px
+              max-width: 100%
+              max-height: 300px
         .imgBox-2
           .imgItem
             overflow: hidden
@@ -171,6 +301,17 @@
         cursor: pointer
         &:hover
           color: #324057
+      .has
+        color: #58B7FF
+        &:hover
+          color: #58B7FF
+    .newComment
+      margin-bottom: 10px
+      position: relative
+      .sbmContent
+        position: absolute
+        bottom: 5px
+        right: 8px
     .thumbs-up
       margin-bottom: 10px
       line-height: 20px
@@ -220,4 +361,9 @@
             font-size: 13px
             font-weight: normal
             color: #99a9bf
+            .delete
+              cursor: pointer
+              &:hover
+                color: #FF4949
+                text-decoration: underline
 </style>

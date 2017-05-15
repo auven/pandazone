@@ -41,7 +41,7 @@
     },
     methods: {
       newMoodSubmit() {
-        if (this.moodText === '' && this.moodImg === []) {
+        if (this.moodText === '' && this.moodImg.length === 0) {
           this.$message.warning('别调皮，你都还没写东西，发表啥！！！');
           return;
         }

@@ -420,58 +420,117 @@ exports.newMood = function (req, res, next) {
 
 // 删除说说
 exports.dlMood = function (req, res, next) {
-  Mood.remove({ _id: '590b5b87b428220300886bfe'}, function (err) {
-    if (err) {
-      res.send("-3"); //删除失败
-      return;
-    }
-    Log.remove({ body: '590b5b87b428220300886bfe'}, function (err1) {
-      if (err1) {
-        res.send("-3"); //删除失败
+  var form = new formidable.IncomingForm();
+  form.parse(req, function (err, fields, files) {
+    var id = fields.id;
+
+    Mood.remove({_id: id}, function (err) {
+      if (err) {
+        res.json({result: "-3"}); //删除失败
         return;
       }
-      console.log('删除成功');
-      res.send('删除成功');
-    })
+      Log.remove({body: id}, function (err1) {
+        if (err1) {
+          res.json({result: "-3"}); //删除失败
+          return;
+        }
+        console.log('删除成功');
+        res.json({result: '1'});
+      })
+    });
   });
 };
 
 // 添加说说评论
 exports.addMoodComment = function (req, res, next) {
-  var pinglun = {
-    moodId: '590b4af6b5002c025778586b',
-    body: {
-      user: 'auven',
-      name: '张剑',
-      time: (new Date()).getTime(),
-      content: '通过_id来评论'
-    }
-  };
+  var form = new formidable.IncomingForm();
+  form.parse(req, function (err, fields, files) {
+    var moodId = fields.moodId;
+    var user = req.session.login.user;
+    var name = req.session.login.name;
+    var avatar = req.session.login.avatar;
+    var content = fields.content;
 
-  Mood.pinglun(pinglun, function (err) {
-    if (err) {
-      res.send("-3"); //服务器错误
-      return;
-    }
-    console.log('评论成功');
-    res.send('评论成功');
+    var pinglun = {
+      moodId: moodId,
+      body: {
+        user: user,
+        name: name,
+        time: new Date(),
+        avatar: avatar,
+        content: content
+      }
+    };
+
+    Mood.pinglun(pinglun, function (err) {
+      if (err) {
+        res.json({result: "-3"}); //服务器错误
+        return;
+      }
+      console.log('评论成功');
+      res.json({result: '1'});
+    });
   });
 };
 
 // 删除说说评论
 exports.dlMoodComment = function (req, res, next) {
-  var pinglun = {
-    moodId: '590b4af6b5002c025778586b',
-    plId: '590b51d2510008029b2b9dc1'
-  };
+  var form = new formidable.IncomingForm();
+  form.parse(req, function (err, fields, files) {
+    var moodId = fields.moodId;
+    var comment = fields.comment;
 
-  Mood.dlPinglun(pinglun, function (err) {
-    if (err) {
-      res.send("-3"); //服务器错误
-      return;
+    var pinglun = {
+      moodId: moodId,
+      comment: comment
+    };
+
+    Mood.dlPinglun(pinglun, function (err) {
+      if (err) {
+        res.json({result: "-3"}); //服务器错误
+        return;
+      }
+      console.log('删除评论成功');
+      res.json({result: '1'});
+    });
+  });
+};
+
+// 点赞
+exports.thumbsUp = function (req, res, next) {
+  var form = new formidable.IncomingForm();
+  form.parse(req, function (err, fields, files) {
+    var moodId = fields.moodId;
+    var status = fields.status;
+    var user = req.session.login.user;
+    var name = req.session.login.name;
+    var thumbsUp = {
+      moodId: moodId,
+      body: {
+        user: user,
+        name: name
+      }
+    };
+
+    if (status) {
+      Mood.cancelThumbsUp(thumbsUp, function (err) {
+        if (err) {
+          res.json({result: "-3"}); //服务器错误
+          return;
+        }
+        console.log('取消点赞成功');
+        res.json({result: '1'});
+      });
+    } else {
+      Mood.thumbsUp(thumbsUp, function (err) {
+        if (err) {
+          res.json({result: "-3"}); //服务器错误
+          return;
+        }
+        console.log('点赞成功');
+        res.json({result: '1'});
+      });
     }
-    console.log('删除评论成功');
-    res.send('删除评论成功');
   });
 };
 

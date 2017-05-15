@@ -3,7 +3,7 @@
     <div class="left">
       <new-mood @subNewMood="getStatus"></new-mood>
       <div v-for="status in statusData">
-        <status :status="status"></status>
+        <status :status="status" :user="user" @refresh="getStatus"></status>
       </div>
       <div class="block">
         <el-pagination

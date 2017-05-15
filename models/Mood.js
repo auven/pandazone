@@ -41,7 +41,32 @@ moodSchema.statics.pinglun = function (obj, callback) {
 
 // 删除评论
 moodSchema.statics.dlPinglun = function (obj, callback) {
-  this.model('Mood').update({_id: obj.moodId}, {$pull: {comments: {_id: obj.plId}}}, callback);
+  this.model('Mood').update({_id: obj.moodId}, {$pull: {comments: obj.comment}}, callback);
+};
+
+// 点赞
+moodSchema.statics.thumbsUp = function (obj, callback) {
+  this.model('Mood').findOne({_id: obj.moodId}, function (err, mood) {
+    if (!mood) {
+      return;
+    }
+    var flag = true;
+    for (var i = 0; i < mood.thumbsUp.length; i++) {
+      if (mood.thumbsUp[i].user === obj.body.user) {
+        flag = false;
+        break;
+      }
+    }
+    if (flag) {
+      mood.thumbsUp.push(obj.body);
+    }
+    mood.save(callback);
+  })
+};
+
+// 取消点赞
+moodSchema.statics.cancelThumbsUp = function (obj, callback) {
+  this.model('Mood').update({_id: obj.moodId}, {$pull: {thumbsUp: {user: obj.body.user}}}, callback);
 };
 
 var moodModel = db.model('Mood', moodSchema);
