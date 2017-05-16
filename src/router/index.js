@@ -5,6 +5,8 @@ import page404 from '@/components/404/404';
 import login from '@/components/login/login';
 import home from '@/components/home/home';
 import index from '@/components/index/index';
+import vueUeditor from '@/components/vueUeditor/vueUeditor';
+import newBlog from '@/components/newBlog/newBlog';
 
 Vue.use(Router);
 
@@ -53,7 +55,7 @@ export default new Router({
         {
           path: 'blog',
           name: 'blog',
-          component: {template: '<div>博客页面</div>'}
+          component: vueUeditor
         },
         {
           path: 'blog/detail',
@@ -63,7 +65,7 @@ export default new Router({
         {
           path: 'blog/new',
           name: 'blogNew',
-          component: {template: '<div>新建博客页面</div>'}
+          component: newBlog
         },
         {
           path: 'blog/modify',
