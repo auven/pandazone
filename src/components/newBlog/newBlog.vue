@@ -2,18 +2,18 @@
   <div class="newBlog">
     <div class="top">写博客</div>
     <div class="new-main">
-      <el-form class="title-group" :model="formInline" label-width="60px" label-position="left">
+      <el-form class="title-group" :model="newBlog" label-width="60px" label-position="left">
         <el-form-item label="标题">
-          <el-input v-model="formInline.user" placeholder="标题"></el-input>
+          <el-input v-model="newBlog.title" placeholder="标题"></el-input>
         </el-form-item>
         <el-form-item label="分组" class="group">
-          <el-select v-model="formInline.region" placeholder="分组">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+          <el-select v-model="newBlog.group" placeholder="选择分组">
+            <el-option v-for="item in groupOption" :value="item" :key="item"></el-option>
           </el-select>
           <span>&nbsp;&nbsp;/&nbsp;&nbsp;</span>
           <el-button v-show="isShow" type="primary" @click="showInput">新建分组</el-button>
           <el-input
+            class="new-blog-group-input"
             v-show="!isShow"
             v-model="newGroup"
             placeholder=""
@@ -21,21 +21,26 @@
             ref="newGroupInput"></el-input>
         </el-form-item>
       </el-form>
-      <vue-ueditor></vue-ueditor>
-      <el-button type="primary" @click="onSubmit">查询</el-button>
+      <vue-ueditor ref="vueUeditor"></vue-ueditor>
+      <div class="new-blog-submit">
+        <el-button>取消</el-button>
+        <el-button type="primary" @click="onSubmit">发表</el-button>
+      </div>
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import vueUeditor from '@/components/vueUeditor/vueUeditor';
+  import Vue from 'vue';
 
   export default {
     data() {
       return {
-        formInline: {
-          user: '',
-          region: ''
+        groupOption: [],
+        newBlog: {
+          title: '',
+          group: ''
         },
         isShow: true,
         newGroup: ''
@@ -43,7 +48,28 @@
     },
     methods: {
       onSubmit() {
-        console.log('submit!');
+        console.log('submit!', this.newBlog);
+        // 操作子组件里的方法
+        var content = this.$refs.vueUeditor.geteditor();
+
+        if (this.newBlog.title !== '' && content !== '') {
+          this.$http.post('/newBlog', {
+            group: this.newBlog.group || this.newGroup || '默认分组',
+            title: this.newBlog.title,
+            content: content
+          }).then(response => {
+            var result = response.body;
+            if (result.result === '1') {
+              this.$message.success('发表说说成功');
+            }
+          }, response => {
+            // error callback
+          });
+        } else if (this.newBlog.title === '') {
+          this.$message.error('标题不能为空');
+        } else if (content === '') {
+          this.$message.error('内容不能为空');
+        }
       },
       showInput() {
         this.isShow = false;
@@ -57,10 +83,26 @@
           return;
         }
         this.isShow = true;
+      },
+      getGroupOption() {
+        this.$http.get('/getBlogGroup').then(response => {
+          // success callback
+          var groups = response.body.group;
+          for (var i = 0; i < groups.length; i++) {
+            // this.groupOption[i] = groups[i].groupName;
+            Vue.set(this.groupOption, i, groups[i].groupName);
+          }
+          console.log(groups, this.groupOption);
+        }, response => {
+          // error callback
+        });
       }
     },
     components: {
       vueUeditor
+    },
+    created() {
+      this.getGroupOption();
     }
   };
 </script>
@@ -85,7 +127,10 @@
       background: #FFFFFF
       .title-group
         .group
-          .el-input
+          .new-blog-group-input
             display: inline-block
             width: 88px
+      .new-blog-submit
+        text-align: right
+        margin: 20px 30px 20px 0
 </style>

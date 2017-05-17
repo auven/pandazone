@@ -1,6 +1,5 @@
 <template>
   <div>
-    <button @click="geteditor()" type="danger">获取</button>
     <script id="editor" type="text/plain"></script>
   </div>
 </template>
@@ -17,7 +16,8 @@
     ),
     methods: {
       geteditor() {
-        console.log(this.editor.getContent());
+        return this.editor.getContent();
+        // console.log(this.editor.getContent());
       }
     },
     mounted() {
@@ -29,8 +29,8 @@
           'customstyle', 'paragraph', 'fontfamily', 'fontsize', '|',
           'directionalityltr', 'directionalityrtl', 'indent', '|',
           'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 'touppercase', 'tolowercase', '|',
-          'link', 'unlink', 'anchor', '|', 'imagenone', 'imageleft', 'imageright', 'imagecenter', '|',
-          'simpleupload', 'insertimage', 'insertcode', 'pagebreak', 'template', 'background', '|',
+          'link', 'unlink', 'anchor', '|',
+          'insertcode', 'pagebreak', 'background', '|',
           'horizontal', 'date', 'time', 'spechars', '|',
           'print', 'preview', 'searchreplace', 'help'
         ]],

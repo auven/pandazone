@@ -10,6 +10,8 @@ var svgCaptcha = require('svg-captcha');
 var User = require('../models/User.js');
 var Log = require('../models/Log.js');
 var Mood = require('../models/Mood.js');
+var Blog = require('../models/Blog.js');
+var BlogGroup = require('../models/BlogGroup.js');
 
 //注册业务
 // exports.doRegist = function (req, res, next) {
@@ -585,6 +587,8 @@ exports.getStatus = function (req, res, next) {
                 status.push(mood);
                 iterator(i + 1);
               })
+            } else {
+              iterator(i + 1);
             }
           })(0);
         })
@@ -604,4 +608,82 @@ exports.newLog = function (req, res, next) {
   },function (err, log) {
     res.send('插入成功');
   })
+};
+
+// 新建博客
+exports.newBlog = function (req, res, next) {
+  var form = new formidable.IncomingForm();
+  form.parse(req, function (err, fields, files) {
+    var group = fields.group;
+    var title = fields.title;
+    var content = fields.content;
+    var time = new Date();
+    var user = req.session.login.user;
+    var name = req.session.login.name;
+    var avatar = req.session.login.avatar;
+
+    var obj = {
+      time: time,
+      user: user,
+      name: name,
+      avatar: avatar,
+      group: group,
+      body: {
+        title: title,
+        content: content
+      }
+    };
+
+    Blog.create(obj, function (err, blog) {
+      if (err) {
+        res.json({result: "-3"}); //服务器错误
+        return;
+      }
+      var bgObj = {
+        user: user,
+        groupName: group,
+        blogId: blog._id
+      };
+      BlogGroup.addToGroup(bgObj, function (err1) {
+        if (err1) {
+          res.json({result: "-3"}); //服务器错误
+          return;
+        }
+        Log.create({
+          type: 'blog',
+          time: time,
+          user: user,
+          name: name,
+          avatar: avatar,
+          body: blog._id
+        }, function (err2, log) {
+          if (err2) {
+            res.json({result: "-3"}); //服务器错误
+            return;
+          }
+          console.log('发表成功');
+          res.json({result: '1'});
+        });
+      })
+    });
+  });
+};
+
+exports.getBlogGroup = function (req, res, next) {
+  if (req.session.login) {
+    var user = req.session.login.user;
+    BlogGroup.findOne({user: user}, function (err, bg) {
+      if (err) {
+        res.json({result: "-3"}); //服务器错误
+        return;
+      }
+      if (!bg) {
+        res.json({result: "-1"}); //没有分组
+      } else {
+        res.json({result: "1", group: bg.blogGroup}); //没有分组
+      }
+    })
+  } else {
+    res.json({result: "-3"}); //服务器错误
+  }
 };

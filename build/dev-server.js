@@ -56,6 +56,8 @@ app.get('/getStatus',router.getStatus);
 app.post('/addMoodComment',router.addMoodComment);
 app.post('/dlMoodComment',router.dlMoodComment);
 app.post('/thumbsUp',router.thumbsUp);
+app.post('/newBlog',router.newBlog);
+app.get('/getBlogGroup',router.getBlogGroup);
 
 var compiler = webpack(webpackConfig)
 
