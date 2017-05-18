@@ -8,8 +8,6 @@ var logSchema = new mongoose.Schema({
   type      :   {type : String},
   time      :   {type : Date},
   user      :   {type : String},
-  name      :   {type : String},
-  avatar    :   {type : String},
   body      :   {type : String}
 });
 
@@ -24,8 +22,11 @@ logSchema.statics.getStatus = function (obj, callback) {
       .select('type body')
       .exec(callback);
   } else {
+    console.log('查询' + obj.type);
     this.model('Log')
       .find({user: {'$in': obj.user}, type: obj.type})
+      .skip(obj.page*(-(-obj.pageSize)))
+      .limit((-(-obj.pageSize)))
       .sort('-time')
       .select('type body')
       .exec(callback);

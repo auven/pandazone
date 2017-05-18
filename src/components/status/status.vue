@@ -89,7 +89,7 @@
         if (this.status.body.img.length === 2) {
           return 'imgBox-2';
         }
-        if (this.status.body.img.length === 3) {
+        if (this.status.body.img.length >= 3) {
           return 'imgBox-3';
         }
       },
@@ -186,7 +186,7 @@
           }).then(() => {
             this.$http.post('/dlMoodComment', {
               moodId: obj.id,
-              comment: obj.comment
+              commentId: obj.comment._id
             }).then(response => {
               var result = response.body;
               if (result.result === '1') {

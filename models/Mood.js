@@ -6,23 +6,18 @@ var db = require("./dbs.js");
 
 var commentSchema = new mongoose.Schema({
   user: String,
-  name: String,
-  avatar: String,
   time: Date,
   content: String
 });
 
 var thumbsUpSchema = new mongoose.Schema({
-  user: String,
-  name: String
+  user: String
 });
 
 var moodSchema = new mongoose.Schema({
   type      :   {type : String, default: 'mood'},
   time      :   {type : Date},
   user      :   {type : String},
-  name      :   {type : String},
-  avatar    :   {type : String},
   body      :   { text: String, img: [String] },
   comments   :   [commentSchema],
   thumbsUp  :   [thumbsUpSchema]
@@ -41,7 +36,7 @@ moodSchema.statics.pinglun = function (obj, callback) {
 
 // 删除评论
 moodSchema.statics.dlPinglun = function (obj, callback) {
-  this.model('Mood').update({_id: obj.moodId}, {$pull: {comments: obj.comment}}, callback);
+  this.model('Mood').update({_id: obj.moodId}, {$pull: {comments: {_id: obj.commentId}}}, callback);
 };
 
 // 点赞

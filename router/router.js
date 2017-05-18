@@ -372,8 +372,6 @@ exports.newMood = function (req, res, next) {
 
     var time = new Date();
     var user = req.session.login.user;
-    var name = req.session.login.name;
-    var avatar = req.session.login.avatar;
     var moodText = fields.moodText;
     var moodImg = fields.moodImg;
     if (moodImg.length) {
@@ -394,8 +392,6 @@ exports.newMood = function (req, res, next) {
     Mood.create({
       time: time,
       user: user,
-      name: name,
-      avatar: avatar,
       body: {
         text: moodText,
         img: moodImg
@@ -409,8 +405,6 @@ exports.newMood = function (req, res, next) {
         type: 'mood',
         time: time,
         user: user,
-        name: name,
-        avatar: avatar,
         body: mood._id
       }, function (err1, log) {
         if (err1) {
@@ -455,17 +449,13 @@ exports.addMoodComment = function (req, res, next) {
   form.parse(req, function (err, fields, files) {
     var moodId = fields.moodId;
     var user = req.session.login.user;
-    var name = req.session.login.name;
-    var avatar = req.session.login.avatar;
     var content = fields.content;
 
     var pinglun = {
       moodId: moodId,
       body: {
         user: user,
-        name: name,
         time: new Date(),
-        avatar: avatar,
         content: content
       }
     };
@@ -486,11 +476,11 @@ exports.dlMoodComment = function (req, res, next) {
   var form = new formidable.IncomingForm();
   form.parse(req, function (err, fields, files) {
     var moodId = fields.moodId;
-    var comment = fields.comment;
+    var commentId = fields.commentId;
 
     var pinglun = {
       moodId: moodId,
-      comment: comment
+      commentId: commentId
     };
 
     Mood.dlPinglun(pinglun, function (err) {
@@ -515,8 +505,7 @@ exports.thumbsUp = function (req, res, next) {
     var thumbsUp = {
       moodId: moodId,
       body: {
-        user: user,
-        name: name
+        user: user
       }
     };
 
@@ -558,7 +547,7 @@ exports.getStatus = function (req, res, next) {
   var status = [];
 
   if (query.all === 'true') {
-    console.log(query.all);
+    console.log('查找所有人');
 
     User.find({user: query.user}, 'friends', function (err, data) {
       if (err) {
@@ -590,8 +579,59 @@ exports.getStatus = function (req, res, next) {
             }
             if (logs[i].type === 'mood') {
               Mood.findById(logs[i].body, function (err, mood) {
-                status.push(mood);
-                iterator(i + 1);
+                // status.push(mood);
+
+                // 这里不能直接 moodData = mood，因为会导致后边的name等无法赋值上去，所以必须一个一个赋值；还有一种办法就是直接在Mood.js里添加name等schema占位，就可以直接赋值。
+                var moodData = {};
+                moodData._id = mood._id;
+                moodData.type = mood.type;
+                moodData.user = mood.user;
+                moodData.time = mood.time;
+                moodData.body = mood.body;
+                moodData.thumbsUp = [];
+                moodData.comments = [];
+
+                User.findOne({user: moodData.user}, 'name avatar', function (err, user) {
+                  moodData.name = user.name;
+                  moodData.avatar = user.avatar;
+
+                  // 查询点赞里的用户的name和avatar
+                  (function iterator1(j) {
+                    if (j === mood.thumbsUp.length) {
+
+                      // 查询评论里的用户的name和avatar
+                      (function iterator2(k) {
+                        if (k === mood.comments.length) {
+                          status.push(moodData);
+                          iterator(i + 1);
+                          return;
+                        }
+                        User.findOne({user: mood.comments[k].user}, 'name avatar', function (err, user) {
+                          var comments = {
+                            user: mood.comments[k].user,
+                            name: user.name,
+                            avatar: user.avatar,
+                            time: mood.comments[k].time,
+                            content: mood.comments[k].content,
+                            _id: mood.comments[k]._id
+                          };
+                          moodData.comments.push(comments);
+                          iterator2(k + 1);
+                        })
+                      })(0);
+                      return;
+                    }
+                    User.findOne({user: mood.thumbsUp[j].user}, 'name', function (err, user) {
+                      var thumbsUp = {
+                        user: mood.thumbsUp[j].user,
+                        name: user.name
+                      };
+                      moodData.thumbsUp.push(thumbsUp);
+                      iterator1(j + 1);
+                    })
+                  })(0);
+
+                });
               })
             } else {
               iterator(i + 1);
@@ -600,6 +640,86 @@ exports.getStatus = function (req, res, next) {
         })
       });
     })
+  } else {
+    console.log('查找个人');
+
+    Log.getTotal(obj, function (err, total) {
+      Log.getStatus(obj, function (err, logs) {
+        // res.send(logs);
+
+        (function iterator(i) {
+          //遍历结束
+          if (i === logs.length) {
+            console.log('遍历完成');
+            res.json({
+              result: '1',
+              status: status,
+              total: total.length
+            });
+            return;
+          }
+          if (logs[i].type === 'mood') {
+            Mood.findById(logs[i].body, function (err, mood) {
+              // status.push(mood);
+
+              // 这里不能直接 moodData = mood，因为会导致后边的name等无法赋值上去，所以必须一个一个赋值；还有一种办法就是直接在Mood.js里添加name等schema占位，就可以直接赋值。
+              var moodData = {};
+              moodData._id = mood._id;
+              moodData.type = mood.type;
+              moodData.user = mood.user;
+              moodData.time = mood.time;
+              moodData.body = mood.body;
+              moodData.thumbsUp = [];
+              moodData.comments = [];
+
+              User.findOne({user: moodData.user}, 'name avatar', function (err, user) {
+                moodData.name = user.name;
+                moodData.avatar = user.avatar;
+
+                // 查询点赞里的用户的name和avatar
+                (function iterator1(j) {
+                  if (j === mood.thumbsUp.length) {
+
+                    // 查询评论里的用户的name和avatar
+                    (function iterator2(k) {
+                      if (k === mood.comments.length) {
+                        status.push(moodData);
+                        iterator(i + 1);
+                        return;
+                      }
+                      User.findOne({user: mood.comments[k].user}, 'name avatar', function (err, user) {
+                        var comments = {
+                          user: mood.comments[k].user,
+                          name: user.name,
+                          avatar: user.avatar,
+                          time: mood.comments[k].time,
+                          content: mood.comments[k].content,
+                          _id: mood.comments[k]._id
+                        };
+                        moodData.comments.push(comments);
+                        iterator2(k + 1);
+                      })
+                    })(0);
+                    return;
+                  }
+                  User.findOne({user: mood.thumbsUp[j].user}, 'name', function (err, user) {
+                    var thumbsUp = {
+                      user: mood.thumbsUp[j].user,
+                      name: user.name
+                    };
+                    moodData.thumbsUp.push(thumbsUp);
+                    iterator1(j + 1);
+                  })
+                })(0);
+
+              });
+            })
+          } else {
+            iterator(i + 1);
+          }
+        })(0);
+      })
+    });
   }
 };
 
@@ -625,14 +745,10 @@ exports.newBlog = function (req, res, next) {
     var content = fields.content;
     var time = new Date();
     var user = req.session.login.user;
-    var name = req.session.login.name;
-    var avatar = req.session.login.avatar;
 
     var obj = {
       time: time,
       user: user,
-      name: name,
-      avatar: avatar,
       group: group,
       body: {
         title: title,
@@ -661,8 +777,6 @@ exports.newBlog = function (req, res, next) {
             type: 'blog',
             time: time,
             user: user,
-            name: name,
-            avatar: avatar,
             body: blog._id
           }, function (err2, log) {
             if (err2) {
@@ -679,8 +793,6 @@ exports.newBlog = function (req, res, next) {
           type: 'blog',
           time: time,
           user: user,
-          name: name,
-          avatar: avatar,
           body: blog._id
         }, function (err2, log) {
           if (err2) {

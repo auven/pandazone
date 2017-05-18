@@ -49,7 +49,7 @@ app.get('/checkEmail/:user/:email',router.checkEmail);
 app.get('/checkLogin',router.checkLogin);
 app.post('/exit',router.exit);
 app.get('/setUser/:user',router.setUser);
-app.get('/test',router.getUserProfile);
+app.get('/test',router.getStatus);
 app.post('/newMood',router.newMood);
 app.post('/dlMood',router.dlMood);
 app.get('/getStatus',router.getStatus);

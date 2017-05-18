@@ -81,6 +81,8 @@
 </template>
 
 <script type="text/ecmascript-6">
+//  import router from '../../router';
+
   export default {
     props: {
       user: {
@@ -179,6 +181,7 @@
         this.active = 1;
       },
       submitStep2() {
+        console.log(this.profileForm);
         this.$http.post('/updateProfile', {
           name: this.profileForm.name,
           email: this.profileForm.email,
@@ -193,7 +196,8 @@
           // get body data
           var result = response.body;
           if (result.result === '1') {
-            this.$message.success('更新成功');
+            this.$message.success('更新成功，头像需刷新网页');
+//            router.go(0);
             // 同时更新页面中的user中的数据
             this.user.loginUser.name = this.profileForm.name;
             this.getUserProfile();

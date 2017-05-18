@@ -1,11 +1,11 @@
 <template>
   <div class="mood">
-    <div class="top"><span>我的说说</span></div>
+    <div class="top"><span v-show="user.isLoginUser">我的说说</span><span v-show="!user.isLoginUser">Ta的说说</span></div>
     <div class="mood-main">
       <div class="left">
-        <new-mood @subNewMood="getStatus"></new-mood>
+        <new-mood @subNewMood="getStatus" class="mood-item" v-show="user.isLoginUser"></new-mood>
         <div v-for="status in statusData">
-          <status :status="status" :user="user" @refresh="getStatus"></status>
+          <status :status="status" :user="user" @refresh="getStatus" class="mood-item"></status>
         </div>
         <div class="block">
           <el-pagination
@@ -20,7 +20,19 @@
         </div>
       </div>
       <div class="right">
-
+        <div class="user-mood-info">
+          <div class="user-avatar">
+            <img :src="user.showUser.avatar">
+          </div>
+          <div class="moods-info">
+            <div class="user-name">
+              {{ user.showUser.name }}
+            </div>
+            <div class="mood-total">
+              <span class="total">{{ total }}</span>&nbsp;篇说说
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -80,7 +92,7 @@
           console.log('hahafdfgdgdfgfsddfgj', self.user.loginUser.user, page);
           if (self.user.loginUser.user) {
             clearInterval(self.pdzTimer.getStatus);
-            self.$http.get('/getStatus?user=' + self.user.loginUser.user + '&all=true&' + 'type=all&' + 'page=' + page + '&pageSize=' + self.pageSize).then(response => {
+            self.$http.get('/getStatus?user=' + self.user.showUser.user + '&all=false&' + 'type=mood&' + 'page=' + page + '&pageSize=' + self.pageSize).then(response => {
               var result = response.body;
               if (result.result === '1') {
                 self.statusData = result.status;
@@ -354,7 +366,8 @@
         if (this.pdzTimer.getStatus) {
           clearInterval(this.pdzTimer.getStatus);
         }
-        router.push({path: '/', query: {page: val}});
+//        console.log(this.$route);
+        router.push({path: this.$route.path, query: {page: val}});
         this.getStatus();
       }
     }
@@ -380,12 +393,42 @@
       overflow: hidden
       .right
         float: right
-        width: 250px
-        background: #000
-        height: 600px
+        width: 230px
+        .user-mood-info
+          position: relative
+          padding-bottom: 20px
+          border-bottom: 1px solid #C0CCDA
+          .user-avatar
+            img
+              width: 80px
+              height: 80px
+              border: 1px dashed #C0CCDA
+              border-radius: 5px
+          .moods-info
+            position: absolute
+            width: 130px
+            top: 0
+            left: 90px
+            text-align: center
+            .user-name
+              height: 40px
+              line-height: 40px
+              font-size: 18px
+              font-weight: 700
+            .mood-total
+              height: 40px
+              line-height: 40px
+              color: #475669
+              .total
+                font-size: 24px
+                font-weight: 700
+                color: #58B7FF
       .left
-        width: 590px
+        width: 600px
         float: left
+        .mood-item
+          border: 1px dashed #C0CCDA
+          border-radius: 5px
         .block
           text-align: center
 </style>

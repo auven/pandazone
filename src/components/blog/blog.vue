@@ -209,6 +209,8 @@
             img
               width: 80px
               height: 80px
+              border: 1px dashed #C0CCDA
+              border-radius: 5px
           .blogs-info
             position: absolute
             width: 130px
