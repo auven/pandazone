@@ -8,6 +8,7 @@ import index from '@/components/index/index';
 import blog from '@/components/blog/blog';
 import newBlog from '@/components/newBlog/newBlog';
 import profile from '@/components/profile/profile';
+import mood from '@/components/mood/mood';
 
 Vue.use(Router);
 
@@ -51,7 +52,7 @@ export default new Router({
         {
           path: 'mood',
           name: 'mood',
-          component: {template: '<div>说说页面</div>'}
+          component: mood
         },
         {
           path: 'blog',
@@ -107,11 +108,6 @@ export default new Router({
           path: 'profile',
           name: 'profile',
           component: profile
-        },
-        {
-          path: 'profile/modify',
-          name: 'profileModify',
-          component: {template: '<div>修改个人档页面</div>'}
         },
         {
           path: '*',

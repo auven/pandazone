@@ -774,6 +774,11 @@ exports.updateProfile = function (req, res, next) {
         fs.rename(oldpath, newpath);
       }
       console.log('注册成功');
+      req.session.login = {
+        user: user,
+        name: name,
+        avatar: avatar
+      };
       res.json({result: "1"}); // 注册成功
     })
 
