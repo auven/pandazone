@@ -7,6 +7,7 @@ import home from '@/components/home/home';
 import index from '@/components/index/index';
 import blog from '@/components/blog/blog';
 import newBlog from '@/components/newBlog/newBlog';
+import profile from '@/components/profile/profile';
 
 Vue.use(Router);
 
@@ -105,7 +106,7 @@ export default new Router({
         {
           path: 'profile',
           name: 'profile',
-          component: {template: '<div>个人档页面</div>'}
+          component: profile
         },
         {
           path: 'profile/modify',

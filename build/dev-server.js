@@ -49,7 +49,7 @@ app.get('/checkEmail/:user/:email',router.checkEmail);
 app.get('/checkLogin',router.checkLogin);
 app.post('/exit',router.exit);
 app.get('/setUser/:user',router.setUser);
-app.get('/test',router.getStatus);
+app.get('/test',router.getUserProfile);
 app.post('/newMood',router.newMood);
 app.post('/dlMood',router.dlMood);
 app.get('/getStatus',router.getStatus);
@@ -58,6 +58,8 @@ app.post('/dlMoodComment',router.dlMoodComment);
 app.post('/thumbsUp',router.thumbsUp);
 app.post('/newBlog',router.newBlog);
 app.get('/getBlogGroup',router.getBlogGroup);
+app.get('/getUserProfile',router.getUserProfile);
+app.post('/updateProfile',router.updateProfile);
 
 var compiler = webpack(webpackConfig)
 

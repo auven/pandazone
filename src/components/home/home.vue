@@ -5,7 +5,7 @@
         <div class="user-avatar"><img :src="user.showUser.avatar"></div>
         <div class="right">
           <div class="user-name">{{ user.showUser.name }}</div>
-          <div class="nav">
+          <div class="nav" v-show="user.isLoginUser">
             <template>
               <el-tabs v-model="activeName" @tab-click="handleClick">
                 <el-tab-pane label="个人主页" :name="'/' + user.showUser.user"></el-tab-pane>
@@ -15,6 +15,17 @@
                 <el-tab-pane label="留言" :name="'/' + user.showUser.user + '/message'"></el-tab-pane>
                 <el-tab-pane label="好友" :name="'/' + user.showUser.user + '/friends'"></el-tab-pane>
                 <el-tab-pane label="个人档" :name="'/' + user.showUser.user + '/profile'"></el-tab-pane>
+              </el-tabs>
+            </template>
+          </div>
+          <div class="nav" v-show="!user.isLoginUser">
+            <template>
+              <el-tabs v-model="activeName" @tab-click="handleClick">
+                <el-tab-pane label="个人主页" :name="'/' + user.showUser.user"></el-tab-pane>
+                <el-tab-pane label="说说" :name="'/' + user.showUser.user + '/mood'"></el-tab-pane>
+                <el-tab-pane label="博客" :name="'/' + user.showUser.user + '/blog'"></el-tab-pane>
+                <el-tab-pane label="相册" :name="'/' + user.showUser.user + '/album'"></el-tab-pane>
+                <el-tab-pane label="留言" :name="'/' + user.showUser.user + '/message'"></el-tab-pane>
               </el-tabs>
             </template>
           </div>

@@ -90,7 +90,7 @@ exports.doRegist = function (req, res, next) {
     var born = fields.born;
     var city = fields.city;
     var hobby = fields.hobby;
-    var label = fields.label;
+    var label = JSON.stringify(fields.label);
     var sign = fields.sign;
 
 
@@ -134,7 +134,12 @@ exports.doRegist = function (req, res, next) {
           fs.rename(oldpath, newpath);
         }
         console.log('注册成功');
-        req.session.login = user;
+        // 设置session
+        req.session.login = {
+          user: user,
+          name: result[0].name,
+          avatar: result[0].avatar
+        };
         res.json({result: "1", info: {user: user, name: name, avatar: avatar}}); // 注册成功
       })
     })
@@ -326,6 +331,7 @@ exports.checkLogin = function (req, res, next) {
   }
 };
 
+// 退出
 exports.exit = function (req, res, next) {
   req.session.login = '';
   req.session.user = '';
@@ -689,6 +695,7 @@ exports.newBlog = function (req, res, next) {
   });
 };
 
+// 获取博客分组
 exports.getBlogGroup = function (req, res, next) {
   if (req.session.login) {
     var user = req.session.login.user;
@@ -706,4 +713,71 @@ exports.getBlogGroup = function (req, res, next) {
   } else {
     res.json({result: "-3"}); //服务器错误
   }
+};
+
+// 获取用户个人档
+exports.getUserProfile = function (req, res, next) {
+  var user = req.session.login.user;
+  User.findOne({user: user}, 'avatar name email sex born city hobby label sign' ,function (err, user) {
+    if (err) {
+      res.json({result: "-3"}); //服务器错误
+      return;
+    }
+    res.json({result: "1", user: user});
+  });
+};
+
+// 更新用户个人档
+exports.updateProfile = function (req, res, next) {
+  var user = req.session.login.user;
+  var form = new formidable.IncomingForm();
+  form.parse(req, function (err, fields, files) {
+
+    // 先判断upload/avatar文件夹是否存在，不存在就创建
+    var avatarDir = fs.existsSync("./upload/avatar");
+
+    if (!avatarDir) {
+      console.log('创建upload/avatar文件夹');
+      fs.mkdirSync("./upload/avatar");
+    }
+
+    //得到表单之后做的事情
+    var name = fields.name;
+    var email = fields.email;
+    var avatar = fields.avatar ? '/upload/avatar/' + user + '.jpg' : "/static/images/moren.jpg";
+    var sex = fields.sex;
+    var born = fields.born;
+    var city = fields.city;
+    var hobby = fields.hobby;
+    var label = JSON.stringify(fields.label);
+    var sign = fields.sign;
+
+    User.update({user: user}, {$set: {
+      name: name,
+      email: email,
+      avatar: avatar,
+      sex: sex,
+      born: born,
+      city: city,
+      hobby: hobby,
+      label: label,
+      sign: sign
+    }}, function (err) {
+      if (err) {
+        res.send("-3"); //服务器错误
+        return;
+      }
+      if (fields.avatar) {
+        var oldpath = path.normalize(__dirname + "/.." + fields.avatar);
+        var newName = user + ".jpg";
+        var newpath = path.normalize(__dirname + "/../upload/avatar") + "/" + newName;
+        fs.rename(oldpath, newpath);
+      }
+      console.log('注册成功');
+      res.json({result: "1"}); // 注册成功
+    })
+
+  });
+
+
 };

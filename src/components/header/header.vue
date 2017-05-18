@@ -13,8 +13,8 @@
         <el-menu-item :index="'/' + user.showUser.user + '/blog'">博客</el-menu-item>
         <el-menu-item :index="'/' + user.showUser.user + '/album'">相册</el-menu-item>
         <el-menu-item :index="'/' + user.showUser.user + '/message'">留言</el-menu-item>
-        <el-menu-item :index="'/' + user.showUser.user + '/friends'">好友</el-menu-item>
-        <el-menu-item :index="'/' + user.showUser.user + '/profile'">个人档</el-menu-item>
+        <el-menu-item :index="'/' + user.showUser.user + '/friends'" v-show="user.isLoginUser">好友</el-menu-item>
+        <el-menu-item :index="'/' + user.showUser.user + '/profile'" v-show="user.isLoginUser">个人档</el-menu-item>
       </el-submenu>
     </el-menu>
     <div class="header-info" v-show="isLogin">
