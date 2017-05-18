@@ -644,11 +644,31 @@ exports.newBlog = function (req, res, next) {
         groupName: group,
         blogId: blog._id
       };
-      BlogGroup.addToGroup(bgObj, function (err1) {
-        if (err1) {
-          res.json({result: "-3"}); //服务器错误
-          return;
-        }
+      if (group) {
+        console.log('有添加分组');
+        BlogGroup.addToGroup(bgObj, function (err1) {
+          if (err1) {
+            res.json({result: "-3"}); //服务器错误
+            return;
+          }
+          Log.create({
+            type: 'blog',
+            time: time,
+            user: user,
+            name: name,
+            avatar: avatar,
+            body: blog._id
+          }, function (err2, log) {
+            if (err2) {
+              res.json({result: "-3"}); //服务器错误
+              return;
+            }
+            console.log('发表成功');
+            res.json({result: '1'});
+          });
+        })
+      } else {
+        console.log('没有添加分组');
         Log.create({
           type: 'blog',
           time: time,
@@ -664,7 +684,7 @@ exports.newBlog = function (req, res, next) {
           console.log('发表成功');
           res.json({result: '1'});
         });
-      })
+      }
     });
   });
 };

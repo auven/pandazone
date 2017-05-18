@@ -23,7 +23,7 @@ var blogSchema = new mongoose.Schema({
   user: String,
   name: String,
   avatar: String,
-  group: {type: String, default: '默认分组'},
+  group: String,
   body: {
     title: String,
     content: String,

@@ -117,4 +117,9 @@
           display: inline-block
           vertical-align: top
           color: #475669
+    .home-body
+      width: 900px
+      margin: 30px auto
+      border-radius: 5px
+      overflow: hidden
 </style>

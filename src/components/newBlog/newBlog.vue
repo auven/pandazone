@@ -54,7 +54,7 @@
 
         if (this.newBlog.title !== '' && content !== '') {
           this.$http.post('/newBlog', {
-            group: this.newBlog.group || this.newGroup || '默认分组',
+            group: this.newBlog.group || this.newGroup || '',
             title: this.newBlog.title,
             content: content
           }).then(response => {
@@ -88,6 +88,9 @@
         this.$http.get('/getBlogGroup').then(response => {
           // success callback
           var groups = response.body.group;
+          if (!groups) {
+            return;
+          }
           for (var i = 0; i < groups.length; i++) {
             // this.groupOption[i] = groups[i].groupName;
             Vue.set(this.groupOption, i, groups[i].groupName);
@@ -109,10 +112,6 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
   .newBlog
-    width: 900px
-    margin: 30px auto
-    border-radius: 5px
-    overflow: hidden
     .top
       box-sizing: border-box
       padding-left: 20px

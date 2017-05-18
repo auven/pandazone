@@ -35,7 +35,13 @@ app.post('/exit',router.exit);
 app.get('/setUser/:user',router.setUser);
 app.get('/test',router.getStatus);
 app.post('/newMood',router.newMood);
+app.post('/dlMood',router.dlMood);
 app.get('/getStatus',router.getStatus);
+app.post('/addMoodComment',router.addMoodComment);
+app.post('/dlMoodComment',router.dlMoodComment);
+app.post('/thumbsUp',router.thumbsUp);
+app.post('/newBlog',router.newBlog);
+app.get('/getBlogGroup',router.getBlogGroup);
 
 
 app.use(express.static('./dist'));

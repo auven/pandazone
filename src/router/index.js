@@ -5,7 +5,7 @@ import page404 from '@/components/404/404';
 import login from '@/components/login/login';
 import home from '@/components/home/home';
 import index from '@/components/index/index';
-import vueUeditor from '@/components/vueUeditor/vueUeditor';
+import blog from '@/components/blog/blog';
 import newBlog from '@/components/newBlog/newBlog';
 
 Vue.use(Router);
@@ -55,7 +55,7 @@ export default new Router({
         {
           path: 'blog',
           name: 'blog',
-          component: vueUeditor
+          component: blog
         },
         {
           path: 'blog/detail',

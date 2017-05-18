@@ -360,15 +360,15 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
   .index
-    width: 960px
-    margin: 30px auto
     overflow: hidden
     .left
       width: 590px
       float: left
+      .block
+        text-align: center
     .right
       float: right
-      width: 350px
+      width: 290px
       background: #000
       height: 600px
 </style>
