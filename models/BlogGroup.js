@@ -48,5 +48,22 @@ bgSchema.statics.addToGroup = function (obj, callback) {
   })
 };
 
+// 从分组中删除
+bgSchema.statics.rmFromGroup = function (obj, callback) {
+  this.model('BlogGroup').findOne({user: obj.user}, function (err, bg) {
+    for (var i = 0; i < bg.blogGroup.length; i++) {
+      if (obj.groupName === bg.blogGroup[i].groupName) {
+        for (var j = 0; j < bg.blogGroup[i].blogs.length; j++) {
+          if (obj.id === bg.blogGroup[i].blogs[j]) {
+            bg.blogGroup[i].blogs.splice(j, 1);
+            bg.save(callback);
+            return;
+          }
+        }
+      }
+    }
+  });
+};
+
 var bgModel = db.model('BlogGroup', bgSchema);
 module.exports = bgModel;

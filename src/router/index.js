@@ -60,9 +60,9 @@ export default new Router({
           component: blog
         },
         {
-          path: 'blog/detail',
+          path: 'blog/detail/:blogId',
           name: 'blogDetail',
-          component: {template: '<div>博客详情页面</div>'}
+          component: {template: '<div>博客详情页面{{ $route.params.blogId }}</div>'}
         },
         {
           path: 'blog/new',

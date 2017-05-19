@@ -421,38 +421,66 @@ exports.newMood = function (req, res, next) {
 };
 
 // 删除说说
-exports.dlMood = function (req, res, next) {
+exports.dl = function (req, res, next) {
   var form = new formidable.IncomingForm();
   form.parse(req, function (err, fields, files) {
+    var type = fields.type;
     var id = fields.id;
 
-    Mood.remove({_id: id}, function (err) {
-      if (err) {
-        res.json({result: "-3"}); //删除失败
-        return;
-      }
-      Log.remove({body: id}, function (err1) {
-        if (err1) {
+    if (type === 'mood') {
+      Mood.remove({_id: id}, function (err) {
+        if (err) {
           res.json({result: "-3"}); //删除失败
           return;
         }
-        console.log('删除成功');
-        res.json({result: '1'});
-      })
-    });
+        Log.remove({body: id}, function (err1) {
+          if (err1) {
+            res.json({result: "-3"}); //删除失败
+            return;
+          }
+          console.log('删除成功');
+          res.json({result: '1'});
+        })
+      });
+    } else if (type === 'blog') {
+      Blog.findOne({_id: id}, function (err, blog) {
+        BlogGroup.rmFromGroup({
+          id: id,
+          user: blog.user,
+          groupName: blog.group
+        }, function (err) {
+          Blog.remove({_id: id}, function (err) {
+            if (err) {
+              res.json({result: "-3"}); //删除失败
+              return;
+            }
+            Log.remove({body: id}, function (err1) {
+              if (err1) {
+                res.json({result: "-3"}); //删除失败
+                return;
+              }
+              console.log('删除成功');
+              res.json({result: '1'});
+            })
+          });
+        });
+      });
+    }
+
   });
 };
 
 // 添加说说评论
-exports.addMoodComment = function (req, res, next) {
+exports.addComment = function (req, res, next) {
   var form = new formidable.IncomingForm();
   form.parse(req, function (err, fields, files) {
-    var moodId = fields.moodId;
+    var type = fields.type;
+    var id = fields.id;
     var user = req.session.login.user;
     var content = fields.content;
 
     var pinglun = {
-      moodId: moodId,
+      id: id,
       body: {
         user: user,
         time: new Date(),
@@ -460,37 +488,62 @@ exports.addMoodComment = function (req, res, next) {
       }
     };
 
-    Mood.pinglun(pinglun, function (err) {
-      if (err) {
-        res.json({result: "-3"}); //服务器错误
-        return;
-      }
-      console.log('评论成功');
-      res.json({result: '1'});
-    });
+    if (type === 'mood') {
+      Mood.pinglun(pinglun, function (err) {
+        if (err) {
+          res.json({result: "-3"}); //服务器错误
+          return;
+        }
+        console.log('评论成功');
+        res.json({result: '1'});
+      });
+    } else if (type === 'blog') {
+      Blog.pinglun(pinglun, function (err) {
+        if (err) {
+          res.json({result: "-3"}); //服务器错误
+          return;
+        }
+        console.log('评论成功');
+        res.json({result: '1'});
+      });
+    }
+
   });
 };
 
 // 删除说说评论
-exports.dlMoodComment = function (req, res, next) {
+exports.dlComment = function (req, res, next) {
   var form = new formidable.IncomingForm();
   form.parse(req, function (err, fields, files) {
-    var moodId = fields.moodId;
+    var type = fields.type;
+    var id = fields.id;
     var commentId = fields.commentId;
 
     var pinglun = {
-      moodId: moodId,
+      id: id,
       commentId: commentId
     };
 
-    Mood.dlPinglun(pinglun, function (err) {
-      if (err) {
-        res.json({result: "-3"}); //服务器错误
-        return;
-      }
-      console.log('删除评论成功');
-      res.json({result: '1'});
-    });
+    if (type === 'mood') {
+      Mood.dlPinglun(pinglun, function (err) {
+        if (err) {
+          res.json({result: "-3"}); //服务器错误
+          return;
+        }
+        console.log('删除评论成功');
+        res.json({result: '1'});
+      });
+    } else if (type === 'blog') {
+      Blog.dlPinglun(pinglun, function (err) {
+        if (err) {
+          res.json({result: "-3"}); //服务器错误
+          return;
+        }
+        console.log('删除评论成功');
+        res.json({result: '1'});
+      });
+    }
+
   });
 };
 
@@ -498,36 +551,59 @@ exports.dlMoodComment = function (req, res, next) {
 exports.thumbsUp = function (req, res, next) {
   var form = new formidable.IncomingForm();
   form.parse(req, function (err, fields, files) {
-    var moodId = fields.moodId;
+    var type = fields.type;
+    var id = fields.id;
     var status = fields.status;
     var user = req.session.login.user;
-    var name = req.session.login.name;
     var thumbsUp = {
-      moodId: moodId,
+      id: id,
       body: {
         user: user
       }
     };
 
-    if (status) {
-      Mood.cancelThumbsUp(thumbsUp, function (err) {
-        if (err) {
-          res.json({result: "-3"}); //服务器错误
-          return;
-        }
-        console.log('取消点赞成功');
-        res.json({result: '1'});
-      });
-    } else {
-      Mood.thumbsUp(thumbsUp, function (err) {
-        if (err) {
-          res.json({result: "-3"}); //服务器错误
-          return;
-        }
-        console.log('点赞成功');
-        res.json({result: '1'});
-      });
+    if (type === 'mood') {
+      if (status) {
+        Mood.cancelThumbsUp(thumbsUp, function (err) {
+          if (err) {
+            res.json({result: "-3"}); //服务器错误
+            return;
+          }
+          console.log('取消点赞成功');
+          res.json({result: '1'});
+        });
+      } else {
+        Mood.thumbsUp(thumbsUp, function (err) {
+          if (err) {
+            res.json({result: "-3"}); //服务器错误
+            return;
+          }
+          console.log('点赞成功');
+          res.json({result: '1'});
+        });
+      }
+    } else if (type === 'blog') {
+      if (status) {
+        Blog.cancelThumbsUp(thumbsUp, function (err) {
+          if (err) {
+            res.json({result: "-3"}); //服务器错误
+            return;
+          }
+          console.log('取消点赞成功');
+          res.json({result: '1'});
+        });
+      } else {
+        Blog.thumbsUp(thumbsUp, function (err) {
+          if (err) {
+            res.json({result: "-3"}); //服务器错误
+            return;
+          }
+          console.log('点赞成功');
+          res.json({result: '1'});
+        });
+      }
     }
+
   });
 };
 
@@ -633,8 +709,61 @@ exports.getStatus = function (req, res, next) {
 
                 });
               })
-            } else {
-              iterator(i + 1);
+            } else if (logs[i].type === 'blog') {
+              Blog.findById(logs[i].body, function (err, blog) {
+                var blogData = {};
+                blogData._id = blog._id;
+                blogData.type = blog.type;
+                blogData.user = blog.user;
+                blogData.time = blog.time;
+                blogData.group = blog.group;
+                blogData.body = blog.body;
+                blogData.thumbsUp = [];
+                blogData.comments = [];
+
+                User.findOne({user: blogData.user}, 'name avatar', function (err, user) {
+                  blogData.name = user.name;
+                  blogData.avatar = user.avatar;
+
+                  // 查询点赞里的用户的name和avatar
+                  (function iterator1(j) {
+                    if (j === blog.thumbsUp.length) {
+
+                      // 查询评论里的用户的name和avatar
+                      (function iterator2(k) {
+                        if (k === blog.comments.length) {
+                          status.push(blogData);
+                          iterator(i + 1);
+                          return;
+                        }
+                        User.findOne({user: blog.comments[k].user}, 'name avatar', function (err, user) {
+                          var comments = {
+                            user: blog.comments[k].user,
+                            name: user.name,
+                            avatar: user.avatar,
+                            time: blog.comments[k].time,
+                            content: blog.comments[k].content,
+                            _id: blog.comments[k]._id
+                          };
+                          blogData.comments.push(comments);
+                          iterator2(k + 1);
+                        })
+                      })(0);
+                      return;
+                    }
+                    User.findOne({user: blog.thumbsUp[j].user}, 'name', function (err, user) {
+                      var thumbsUp = {
+                        user: blog.thumbsUp[j].user,
+                        name: user.name
+                      };
+                      blogData.thumbsUp.push(thumbsUp);
+                      iterator1(j + 1);
+                    })
+                  })(0);
+
+                });
+
+              });
             }
           })(0);
         })

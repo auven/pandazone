@@ -20,6 +20,9 @@
           </div>
         </div>
       </div>
+      <div class="blogBody" v-if="status.type === 'blog'">
+        <router-link :to="{name: 'blogDetail', params: {user: status.user, blogId: status._id}}"><i class="el-icon-document"></i><span class="title">{{ status.body.title }}</span></router-link>
+      </div>
     </div>
     <div class="status-op">
       <i :class="'icon-dianzan' + hasClass" @click="thumbsUp({id: status._id, type: status.type})"></i>
@@ -114,43 +117,41 @@
     methods: {
       dls(op) {
         console.log(op);
-        if (op.type === 'mood') {
-          this.$confirm('此操作将永久删除该说说, 是否继续?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            this.$http.post('/dlMood', {
-              id: op.id
-            }).then(response => {
-              var result = response.body;
-              if (result.result === '1') {
-                this.$message.success('删除说说成功');
-                this.$emit('refresh');
-              }
-            });
-          }).catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消删除'
-            });
-          });
-        }
-      },
-      thumbsUp(op) {
-        console.log(op);
-        if (op.type === 'mood') {
-          this.$http.post('/thumbsUp', {
-            moodId: op.id,
-            status: this.hasThumbsUp
+        this.$confirm('此操作将永久删除该说说, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$http.post('/dl', {
+            type: op.type,
+            id: op.id
           }).then(response => {
             var result = response.body;
             if (result.result === '1') {
-              // this.$message.success('点赞成功');
+              this.$message.success('删除说说成功');
               this.$emit('refresh');
             }
           });
-        }
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+      },
+      thumbsUp(op) {
+        console.log(op);
+        this.$http.post('/thumbsUp', {
+          type: op.type,
+          id: op.id,
+          status: this.hasThumbsUp
+        }).then(response => {
+          var result = response.body;
+          if (result.result === '1') {
+            // this.$message.success('点赞成功');
+            this.$emit('refresh');
+          }
+        });
       },
       comment(op) {
         console.log(op, this.content);
@@ -158,49 +159,47 @@
           this.$message.warning('别调皮，你都还没写东西，发表啥！！！');
           return;
         }
-        if (op.type === 'mood') {
-          this.$http.post('/addMoodComment', {
-            moodId: op.id,
-            content: this.content
-          }).then(response => {
-            var result = response.body;
-            if (result.result === '1') {
-              this.$message.success('发表pinglun成功');
-              this.$emit('refresh');
-              this.content = '';
-              this.showNewComment = false;
-            }
-          });
-        }
+        this.$http.post('/addComment', {
+          type: op.type,
+          id: op.id,
+          content: this.content
+        }).then(response => {
+          var result = response.body;
+          if (result.result === '1') {
+            this.$message.success('发表pinglun成功');
+            this.$emit('refresh');
+            this.content = '';
+            this.showNewComment = false;
+          }
+        });
       },
       snc() {
         this.showNewComment = !this.showNewComment;
       },
       dlComment(obj) {
         console.log(obj);
-        if (obj.type === 'mood') {
-          this.$confirm('此操作将永久删除该评论, 是否继续?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            this.$http.post('/dlMoodComment', {
-              moodId: obj.id,
-              commentId: obj.comment._id
-            }).then(response => {
-              var result = response.body;
-              if (result.result === '1') {
-                this.$message.success('删除说说成功');
-                this.$emit('refresh');
-              }
-            });
-          }).catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消删除'
-            });
+        this.$confirm('此操作将永久删除该评论, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$http.post('/dlComment', {
+            type: obj.type,
+            id: obj.id,
+            commentId: obj.comment._id
+          }).then(response => {
+            var result = response.body;
+            if (result.result === '1') {
+              this.$message.success('删除说说成功');
+              this.$emit('refresh');
+            }
           });
-        }
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
       }
     }
   };
@@ -286,6 +285,24 @@
               top: 50%
               left: 50%
               transform: translate(-50%, -50%)
+      .blogBody
+        a
+          display: flex
+          align-items: center
+          padding: 10px 20px
+          background: rgba(112, 144, 218, 0.1)
+          color: #5e6d82
+          text-decoration: none
+          line-height: 1.5
+          transition: all 0.3s ease-in
+          .el-icon-document
+            display: inline-block
+            margin-right: 12px
+            font-size: 40px
+          &:hover
+            border-radius: 8px
+            border: 1px dashed #58B7FF
+            color: #58B7FF
     .status-op
       margin-bottom: 10px
       text-align: right

@@ -25,7 +25,7 @@ var moodSchema = new mongoose.Schema({
 
 // 评论
 moodSchema.statics.pinglun = function (obj, callback) {
-  this.model('Mood').findOne({_id: obj.moodId}, function (err, mood) {
+  this.model('Mood').findOne({_id: obj.id}, function (err, mood) {
     if (!mood) {
       return;
     }
@@ -36,12 +36,12 @@ moodSchema.statics.pinglun = function (obj, callback) {
 
 // 删除评论
 moodSchema.statics.dlPinglun = function (obj, callback) {
-  this.model('Mood').update({_id: obj.moodId}, {$pull: {comments: {_id: obj.commentId}}}, callback);
+  this.model('Mood').update({_id: obj.id}, {$pull: {comments: {_id: obj.commentId}}}, callback);
 };
 
 // 点赞
 moodSchema.statics.thumbsUp = function (obj, callback) {
-  this.model('Mood').findOne({_id: obj.moodId}, function (err, mood) {
+  this.model('Mood').findOne({_id: obj.id}, function (err, mood) {
     if (!mood) {
       return;
     }
@@ -61,7 +61,7 @@ moodSchema.statics.thumbsUp = function (obj, callback) {
 
 // 取消点赞
 moodSchema.statics.cancelThumbsUp = function (obj, callback) {
-  this.model('Mood').update({_id: obj.moodId}, {$pull: {thumbsUp: {user: obj.body.user}}}, callback);
+  this.model('Mood').update({_id: obj.id}, {$pull: {thumbsUp: {user: obj.body.user}}}, callback);
 };
 
 var moodModel = db.model('Mood', moodSchema);
