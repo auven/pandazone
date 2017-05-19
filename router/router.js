@@ -638,140 +638,15 @@ exports.getStatus = function (req, res, next) {
 
       // console.log(data[0].friends);
 
-      Log.getTotal(obj, function (err, total) {
-        Log.getStatus(obj, function (err, logs) {
-          // res.send(logs);
-
-          (function iterator(i) {
-            //遍历结束
-            if (i === logs.length) {
-              console.log('遍历完成');
-              res.json({
-                result: '1',
-                status: status,
-                total: total.length
-              });
-              return;
-            }
-            if (logs[i].type === 'mood') {
-              Mood.findById(logs[i].body, function (err, mood) {
-                // status.push(mood);
-
-                // 这里不能直接 moodData = mood，因为会导致后边的name等无法赋值上去，所以必须一个一个赋值；还有一种办法就是直接在Mood.js里添加name等schema占位，就可以直接赋值。
-                var moodData = {};
-                moodData._id = mood._id;
-                moodData.type = mood.type;
-                moodData.user = mood.user;
-                moodData.time = mood.time;
-                moodData.body = mood.body;
-                moodData.thumbsUp = [];
-                moodData.comments = [];
-
-                User.findOne({user: moodData.user}, 'name avatar', function (err, user) {
-                  moodData.name = user.name;
-                  moodData.avatar = user.avatar;
-
-                  // 查询点赞里的用户的name和avatar
-                  (function iterator1(j) {
-                    if (j === mood.thumbsUp.length) {
-
-                      // 查询评论里的用户的name和avatar
-                      (function iterator2(k) {
-                        if (k === mood.comments.length) {
-                          status.push(moodData);
-                          iterator(i + 1);
-                          return;
-                        }
-                        User.findOne({user: mood.comments[k].user}, 'name avatar', function (err, user) {
-                          var comments = {
-                            user: mood.comments[k].user,
-                            name: user.name,
-                            avatar: user.avatar,
-                            time: mood.comments[k].time,
-                            content: mood.comments[k].content,
-                            _id: mood.comments[k]._id
-                          };
-                          moodData.comments.push(comments);
-                          iterator2(k + 1);
-                        })
-                      })(0);
-                      return;
-                    }
-                    User.findOne({user: mood.thumbsUp[j].user}, 'name', function (err, user) {
-                      var thumbsUp = {
-                        user: mood.thumbsUp[j].user,
-                        name: user.name
-                      };
-                      moodData.thumbsUp.push(thumbsUp);
-                      iterator1(j + 1);
-                    })
-                  })(0);
-
-                });
-              })
-            } else if (logs[i].type === 'blog') {
-              Blog.findById(logs[i].body, function (err, blog) {
-                var blogData = {};
-                blogData._id = blog._id;
-                blogData.type = blog.type;
-                blogData.user = blog.user;
-                blogData.time = blog.time;
-                blogData.group = blog.group;
-                blogData.body = blog.body;
-                blogData.thumbsUp = [];
-                blogData.comments = [];
-
-                User.findOne({user: blogData.user}, 'name avatar', function (err, user) {
-                  blogData.name = user.name;
-                  blogData.avatar = user.avatar;
-
-                  // 查询点赞里的用户的name和avatar
-                  (function iterator1(j) {
-                    if (j === blog.thumbsUp.length) {
-
-                      // 查询评论里的用户的name和avatar
-                      (function iterator2(k) {
-                        if (k === blog.comments.length) {
-                          status.push(blogData);
-                          iterator(i + 1);
-                          return;
-                        }
-                        User.findOne({user: blog.comments[k].user}, 'name avatar', function (err, user) {
-                          var comments = {
-                            user: blog.comments[k].user,
-                            name: user.name,
-                            avatar: user.avatar,
-                            time: blog.comments[k].time,
-                            content: blog.comments[k].content,
-                            _id: blog.comments[k]._id
-                          };
-                          blogData.comments.push(comments);
-                          iterator2(k + 1);
-                        })
-                      })(0);
-                      return;
-                    }
-                    User.findOne({user: blog.thumbsUp[j].user}, 'name', function (err, user) {
-                      var thumbsUp = {
-                        user: blog.thumbsUp[j].user,
-                        name: user.name
-                      };
-                      blogData.thumbsUp.push(thumbsUp);
-                      iterator1(j + 1);
-                    })
-                  })(0);
-
-                });
-
-              });
-            }
-          })(0);
-        })
-      });
+      mainFn(obj);
     })
   } else {
     console.log('查找个人');
 
+    mainFn(obj);
+  }
+
+  function mainFn(obj) {
     Log.getTotal(obj, function (err, total) {
       Log.getStatus(obj, function (err, logs) {
         // res.send(logs);
@@ -843,8 +718,61 @@ exports.getStatus = function (req, res, next) {
 
               });
             })
-          } else {
-            iterator(i + 1);
+          } else if (logs[i].type === 'blog') {
+            Blog.findById(logs[i].body, function (err, blog) {
+              var blogData = {};
+              blogData._id = blog._id;
+              blogData.type = blog.type;
+              blogData.user = blog.user;
+              blogData.time = blog.time;
+              blogData.group = blog.group;
+              blogData.body = blog.body;
+              blogData.thumbsUp = [];
+              blogData.comments = [];
+
+              User.findOne({user: blogData.user}, 'name avatar', function (err, user) {
+                blogData.name = user.name;
+                blogData.avatar = user.avatar;
+
+                // 查询点赞里的用户的name和avatar
+                (function iterator1(j) {
+                  if (j === blog.thumbsUp.length) {
+
+                    // 查询评论里的用户的name和avatar
+                    (function iterator2(k) {
+                      if (k === blog.comments.length) {
+                        status.push(blogData);
+                        iterator(i + 1);
+                        return;
+                      }
+                      User.findOne({user: blog.comments[k].user}, 'name avatar', function (err, user) {
+                        var comments = {
+                          user: blog.comments[k].user,
+                          name: user.name,
+                          avatar: user.avatar,
+                          time: blog.comments[k].time,
+                          content: blog.comments[k].content,
+                          _id: blog.comments[k]._id
+                        };
+                        blogData.comments.push(comments);
+                        iterator2(k + 1);
+                      })
+                    })(0);
+                    return;
+                  }
+                  User.findOne({user: blog.thumbsUp[j].user}, 'name', function (err, user) {
+                    var thumbsUp = {
+                      user: blog.thumbsUp[j].user,
+                      name: user.name
+                    };
+                    blogData.thumbsUp.push(thumbsUp);
+                    iterator1(j + 1);
+                  })
+                })(0);
+
+              });
+
+            });
           }
         })(0);
       })

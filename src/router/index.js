@@ -9,6 +9,7 @@ import blog from '@/components/blog/blog';
 import newBlog from '@/components/newBlog/newBlog';
 import profile from '@/components/profile/profile';
 import mood from '@/components/mood/mood';
+import userIndex from '@/components/userIndex/userIndex';
 
 Vue.use(Router);
 
@@ -49,6 +50,11 @@ export default new Router({
       // 请注意注意注意注意注意，模板必须包含在一个div中
       component: home,
       children: [
+        {
+          path: '',
+          name: 'userIndex',
+          component: userIndex
+        },
         {
           path: 'mood',
           name: 'mood',
