@@ -62,6 +62,7 @@ app.get('/getUserProfile',router.getUserProfile);
 app.post('/updateProfile',router.updateProfile);
 app.post('/newAlbum',router.newAlbum);
 app.get('/getAlbum',router.getAlbum);
+app.get('/getAlbumById',router.getAlbumById);
 
 var compiler = webpack(webpackConfig)
 

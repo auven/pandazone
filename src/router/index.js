@@ -12,6 +12,7 @@ import mood from '@/components/mood/mood';
 import userIndex from '@/components/userIndex/userIndex';
 import uploadImg from '@/components/uploadImg/uploadImg';
 import album from '@/components/album/album';
+import albumDetail from '@/components/albumDetail/albumDetail';
 
 Vue.use(Router);
 
@@ -95,7 +96,7 @@ export default new Router({
         {
           path: 'album/:albumId',
           name: 'albumDetail',
-          component: {template: '<div>相册---{{ $route.params.albumId }}</div>'}
+          component: albumDetail
         },
         {
           path: 'album/upload',

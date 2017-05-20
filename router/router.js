@@ -1019,3 +1019,14 @@ exports.getAlbum = function (req, res, next) {
       res.json({result: '1', album: album});
     });
 };
+
+exports.getAlbumById = function (req, res, next) {
+  var id = req.query.id;
+  Album.findOne({_id: id}, function (err, album) {
+    if (err) {
+      res.send("-3"); //服务器错误
+      return;
+    }
+    res.json({result: '1', album: album});
+  });
+};
