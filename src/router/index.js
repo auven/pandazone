@@ -10,6 +10,8 @@ import newBlog from '@/components/newBlog/newBlog';
 import profile from '@/components/profile/profile';
 import mood from '@/components/mood/mood';
 import userIndex from '@/components/userIndex/userIndex';
+import uploadImg from '@/components/uploadImg/uploadImg';
+import album from '@/components/album/album';
 
 Vue.use(Router);
 
@@ -83,17 +85,17 @@ export default new Router({
         {
           path: 'album',
           name: 'album',
-          component: {template: '<div>相册页面</div>'}
-        },
-        {
-          path: 'album/:name',
-          name: 'albumDetail',
-          component: {template: '<div>相册---{{ $route.params.name }}</div>'}
+          component: album
         },
         {
           path: 'album/new',
           name: 'albumNew',
-          component: {template: '<div>新建相册页面</div>'}
+          component: uploadImg
+        },
+        {
+          path: 'album/:albumId',
+          name: 'albumDetail',
+          component: {template: '<div>相册---{{ $route.params.albumId }}</div>'}
         },
         {
           path: 'album/upload',

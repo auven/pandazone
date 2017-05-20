@@ -60,6 +60,8 @@ app.post('/newBlog',router.newBlog);
 app.get('/getBlogGroup',router.getBlogGroup);
 app.get('/getUserProfile',router.getUserProfile);
 app.post('/updateProfile',router.updateProfile);
+app.post('/newAlbum',router.newAlbum);
+app.get('/getAlbum',router.getAlbum);
 
 var compiler = webpack(webpackConfig)
 

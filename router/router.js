@@ -12,6 +12,7 @@ var Log = require('../models/Log.js');
 var Mood = require('../models/Mood.js');
 var Blog = require('../models/Blog.js');
 var BlogGroup = require('../models/BlogGroup.js');
+var Album = require('../models/Album.js');
 
 //注册业务
 // exports.doRegist = function (req, res, next) {
@@ -227,7 +228,10 @@ exports.uploadTemp = function (req, res, next) {
   form.parse(req, function (err, fields, files) {
     // console.log(files);
     var oldpath = files.avatar.path;
-    var newName = new Date().getTime() + ".jpg";
+    var pathArr = oldpath.split('/');
+    var oldName = pathArr[pathArr.length-1];
+    console.log(pathArr[pathArr.length-1]);
+    var newName = oldName + ".jpg";
     var newpath = path.normalize(__dirname + "/../upload/temp") + "/" + newName;
     fs.rename(oldpath, newpath, function (err) {
       if (err) {
@@ -954,4 +958,64 @@ exports.updateProfile = function (req, res, next) {
   });
 
 
+};
+
+
+exports.newAlbum = function (req, res, next) {
+  // 先判断upload/moodImg文件夹是否存在，不存在就创建
+  var avatarDir = fs.existsSync("./upload/album");
+
+  if (!avatarDir) {
+    console.log('创建upload/album');
+    fs.mkdirSync("./upload/album");
+  }
+
+  var user = req.session.login.user;
+  var form = new formidable.IncomingForm();
+  form.parse(req, function (err, fields, files) {
+    var time = new Date();
+    var body = fields.body;
+
+    for (var i = 0; i < body.photos.length; i++) {
+      console.log(body.photos[i]);
+      var oldpath = path.normalize(__dirname + "/.." + body.photos[i]);
+      var newName = time.getTime() + '(' + i + ')' + ".jpg";
+      console.log(newName);
+      var newpath = path.normalize(__dirname + "/../upload/album") + "/" + newName;
+      fs.renameSync(oldpath, newpath);
+      body.photos[i] = "/upload/album/" + newName;
+    }
+
+    Album.create({
+      time: time,
+      user: user,
+      body: {
+        name: body.name,
+        cover: body.photos[0],
+        desc: body.desc,
+        photos: body.photos
+      }
+    }, function (err, album) {
+      if (err) {
+        res.send("-3"); //服务器错误
+        return;
+      }
+      res.json({result: '1'});
+    })
+  });
+};
+
+exports.getAlbum = function (req, res, next) {
+  var query = req.query;
+  var user = query.user;
+
+  Album.find({user: user})
+    .sort('-time')
+    .exec(function (err, album) {
+      if (err) {
+        res.send("-3"); //服务器错误
+        return;
+      }
+      res.json({result: '1', album: album});
+    });
 };
