@@ -86,7 +86,7 @@ exports.doRegist = function (req, res, next) {
     var name = fields.name;
     var pass = fields.pass;
     var email = fields.email;
-    var avatar = fields.avatar ? '/upload/avatar/' + user + '.jpg' : "/upload/avatar/moren.jpg";
+    var avatar = fields.avatar ? '/upload/avatar/' + user + '.jpg' : "/static/images/moren.jpg";
     var sex = fields.sex;
     var born = fields.born;
     var city = fields.city;
@@ -138,8 +138,8 @@ exports.doRegist = function (req, res, next) {
         // 设置session
         req.session.login = {
           user: user,
-          name: result[0].name,
-          avatar: result[0].avatar
+          name: result.name,
+          avatar: result.avatar
         };
         res.json({result: "1", info: {user: user, name: name, avatar: avatar}}); // 注册成功
       })
@@ -228,9 +228,10 @@ exports.uploadTemp = function (req, res, next) {
   form.parse(req, function (err, fields, files) {
     // console.log(files);
     var oldpath = files.avatar.path;
-    var pathArr = oldpath.split('/');
-    var oldName = pathArr[pathArr.length-1];
-    console.log(pathArr[pathArr.length-1]);
+    // 将路径字符串转换成对象
+    var pathObj = path.parse(oldpath);
+    var oldName = pathObj.name;
+    console.log(pathObj, oldName);
     var newName = oldName + ".jpg";
     var newpath = path.normalize(__dirname + "/../upload/temp") + "/" + newName;
     fs.rename(oldpath, newpath, function (err) {
