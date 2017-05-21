@@ -12,7 +12,7 @@ var messageSchema = new mongoose.Schema({
 
 var friendSchema = new mongoose.Schema({
   user      :   {type : String},
-  eachFocus :   {type : Boolean}
+  eachFocus :   {type : Boolean, default: false}
 });
 
 var userSchema = new mongoose.Schema({

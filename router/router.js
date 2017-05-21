@@ -1030,3 +1030,38 @@ exports.getAlbumById = function (req, res, next) {
     res.json({result: '1', album: album});
   });
 };
+
+exports.getFriends = function (req, res, next) {
+  var user = req.session.login.user;
+  User.findOne({user: user}, 'friends', function (err, user1) {
+    var friends = [];
+    for (var i = 0; i < user1.friends.length; i++) {
+      friends.push(user1.friends[i].user);
+    }
+
+    var userData = [];
+    User.find({user: {'$in': friends}}, function (err, user2) {
+      if (err) {
+        res.send('-3');
+        return;
+      }
+      for (var i = 0; i < user2.length; i++) {
+        for (var j = 0; j < user2[i].friends.length; j++) {
+          if (user === user2[i].friends[j].user) {
+            user2[i].friends[j].eachFocus = true;
+          }
+        }
+        userData.push(user2[i]);
+      }
+
+      User.find({user: {'$nin': friends}}, function (err, user3) {
+        if (err) {
+          res.send('-3');
+          return;
+        }
+        res.json({result: '1', isFriend: userData, notFriend: user3});
+      });
+
+    })
+  })
+};

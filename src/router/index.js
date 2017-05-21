@@ -13,6 +13,7 @@ import userIndex from '@/components/userIndex/userIndex';
 import uploadImg from '@/components/uploadImg/uploadImg';
 import album from '@/components/album/album';
 import albumDetail from '@/components/albumDetail/albumDetail';
+import friends from '@/components/friends/friends';
 
 Vue.use(Router);
 
@@ -111,7 +112,7 @@ export default new Router({
         {
           path: 'friends',
           name: 'friends',
-          component: {template: '<div>好友页面</div>'}
+          component: friends
         },
         {
           path: 'profile',
