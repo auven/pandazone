@@ -23,7 +23,7 @@ var autoOpenBrowser = !!config.dev.autoOpenBrowser
 var proxyTable = config.dev.proxyTable
 
 //引入服务器路由配置
-var router = require('../router/router.js');
+var router = require('../server/router/router.js');
 var session = require('express-session');
 
 
@@ -37,7 +37,7 @@ app.use(session({
 
 //设置路由
 //注册业务
-app.use("/upload",express.static("./upload"));
+app.use("/upload",express.static("./server/upload"));
 app.post('/doregister',router.doRegist);
 app.get('/getCitys',router.getCitys);
 app.get('/getCaptcha',router.getCaptcha);

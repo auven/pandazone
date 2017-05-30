@@ -21,7 +21,7 @@ app.use(session({
 
 //设置路由
 //注册业务
-app.use("/upload",express.static("./upload"));
+app.use("/upload",express.static("./server/upload"));
 app.post('/doregister',router.doRegist);
 app.get('/getCitys',router.getCitys);
 app.get('/getCaptcha',router.getCaptcha);
@@ -33,15 +33,29 @@ app.get('/checkEmail/:user/:email',router.checkEmail);
 app.get('/checkLogin',router.checkLogin);
 app.post('/exit',router.exit);
 app.get('/setUser/:user',router.setUser);
-app.get('/test',router.getStatus);
+app.get('/test',router.getFriends);
 app.post('/newMood',router.newMood);
-app.post('/dlMood',router.dlMood);
+app.post('/dl',router.dl);
 app.get('/getStatus',router.getStatus);
-app.post('/addMoodComment',router.addMoodComment);
-app.post('/dlMoodComment',router.dlMoodComment);
+app.post('/addComment',router.addComment);
+app.post('/dlComment',router.dlComment);
 app.post('/thumbsUp',router.thumbsUp);
 app.post('/newBlog',router.newBlog);
 app.get('/getBlogGroup',router.getBlogGroup);
+app.get('/getUserProfile',router.getUserProfile);
+app.post('/updateProfile',router.updateProfile);
+app.post('/newAlbum',router.newAlbum);
+app.get('/getAlbum',router.getAlbum);
+app.get('/getAlbumById',router.getAlbumById);
+app.post('/newMsg',router.newMsg);
+app.get('/getMsg', router.getMsg);
+app.post('/dlMsg', router.dlMsg);
+app.get('/getFriends',router.getFriends);
+app.post('/addFriend', router.addFriend);
+app.post('/dlFriend', router.dlFriend);
+app.get('/getBlogs', router.getBlogs);
+app.get('/getBlogDetail', router.getBlogDetail);
+app.post('/modifyBlog', router.modifyBlog);
 
 
 app.use(express.static('./dist'));

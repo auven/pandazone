@@ -74,11 +74,11 @@ exports.doRegist = function (req, res, next) {
   form.parse(req, function (err, fields, files) {
 
     // 先判断upload/avatar文件夹是否存在，不存在就创建
-    var avatarDir = fs.existsSync("./upload/avatar");
+    var avatarDir = fs.existsSync("./server/upload/avatar");
 
     if (!avatarDir) {
       console.log('创建upload/avatar文件夹');
-      fs.mkdirSync("./upload/avatar");
+      fs.mkdirSync("./server/upload/avatar");
     }
 
     //得到表单之后做的事情
@@ -207,17 +207,17 @@ exports.findUser = function (req, res, next) {
 // 上传图片
 exports.uploadTemp = function (req, res, next) {
   // 先判断upload/avatar文件夹是否存在，不存在就创建
-  var uploadDir = fs.existsSync("./upload");
-  var tempDir = fs.existsSync("./upload/temp");
+  var uploadDir = fs.existsSync("./server/upload");
+  var tempDir = fs.existsSync("./server/upload/temp");
 
   if (!uploadDir) {
     console.log('创建upload文件夹');
-    fs.mkdirSync("./upload");
+    fs.mkdirSync("./server/upload");
   }
 
   if (!tempDir) {
     console.log('创建upload/avatar文件夹');
-    fs.mkdirSync("./upload/temp");
+    fs.mkdirSync("./server/upload/temp");
   }
 
 
@@ -363,11 +363,11 @@ exports.setUser = function (req, res, next) {
 exports.newMood = function (req, res, next) {
 
   // 先判断upload/moodImg文件夹是否存在，不存在就创建
-  var avatarDir = fs.existsSync("./upload/moodImg");
+  var avatarDir = fs.existsSync("./server/upload/moodImg");
 
   if (!avatarDir) {
     console.log('创建upload/moodImg文件夹');
-    fs.mkdirSync("./upload/moodImg");
+    fs.mkdirSync("./server/upload/moodImg");
   }
 
   var form = new formidable.IncomingForm();
@@ -920,11 +920,11 @@ exports.updateProfile = function (req, res, next) {
   form.parse(req, function (err, fields, files) {
 
     // 先判断upload/avatar文件夹是否存在，不存在就创建
-    var avatarDir = fs.existsSync("./upload/avatar");
+    var avatarDir = fs.existsSync("./server/upload/avatar");
 
     if (!avatarDir) {
       console.log('创建upload/avatar文件夹');
-      fs.mkdirSync("./upload/avatar");
+      fs.mkdirSync("./server/upload/avatar");
     }
 
     //得到表单之后做的事情
@@ -978,11 +978,11 @@ exports.updateProfile = function (req, res, next) {
 
 exports.newAlbum = function (req, res, next) {
   // 先判断upload/moodImg文件夹是否存在，不存在就创建
-  var avatarDir = fs.existsSync("./upload/album");
+  var avatarDir = fs.existsSync("./server/upload/album");
 
   if (!avatarDir) {
     console.log('创建upload/album');
-    fs.mkdirSync("./upload/album");
+    fs.mkdirSync("./server/upload/album");
   }
 
   var user = req.session.login.user;
