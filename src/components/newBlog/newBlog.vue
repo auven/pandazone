@@ -35,6 +35,11 @@
   import Vue from 'vue';
 
   export default {
+    props: {
+      user: {
+        type: Object
+      }
+    },
     data() {
       return {
         groupOption: [],
@@ -85,20 +90,26 @@
         this.isShow = true;
       },
       getGroupOption() {
-        this.$http.get('/getBlogGroup').then(response => {
-          // success callback
-          var groups = response.body.group;
-          if (!groups) {
-            return;
+        var self = this;
+        self.pdzTimer.getStatus = setInterval(function () {
+          if (self.user.showUser.user) {
+            clearInterval(self.pdzTimer.getStatus);
+            self.$http.get('/getBlogGroup?user=' + self.user.showUser.user).then(response => {
+              // success callback
+              var groups = response.body.group;
+              if (!groups) {
+                return;
+              }
+              for (var i = 0; i < groups.length; i++) {
+                // this.groupOption[i] = groups[i].groupName;
+                Vue.set(self.groupOption, i, groups[i].groupName);
+              }
+              console.log(groups, self.groupOption);
+            }, response => {
+              // error callback
+            });
           }
-          for (var i = 0; i < groups.length; i++) {
-            // this.groupOption[i] = groups[i].groupName;
-            Vue.set(this.groupOption, i, groups[i].groupName);
-          }
-          console.log(groups, this.groupOption);
-        }, response => {
-          // error callback
-        });
+        }, 50);
       }
     },
     components: {

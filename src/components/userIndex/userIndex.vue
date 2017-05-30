@@ -75,7 +75,7 @@
           console.log('hahafdfgdgdfgfsddfgj', self.user.loginUser.user, page);
           if (self.user.loginUser.user) {
             clearInterval(self.pdzTimer.getStatus);
-            self.$http.get('/getStatus?user=' + self.user.loginUser.user + '&all=false&' + 'type=all&' + 'page=' + page + '&pageSize=' + self.pageSize).then(response => {
+            self.$http.get('/getStatus?user=' + self.user.showUser.user + '&all=false&' + 'type=all&' + 'page=' + page + '&pageSize=' + self.pageSize).then(response => {
               var result = response.body;
               if (result.result === '1') {
                 self.statusData = result.status;

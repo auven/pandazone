@@ -5,103 +5,54 @@
       <div class="left">
         <div class="new-blog-btn"><el-button type="primary" @click="newBlogBtn">写博客</el-button></div>
         <div class="blog-main-wrap">
-          <div class="blog-item">
-            <div class="title">文章标题文章标题文章标题文章标题文章标题文章标题文章标题文章标题文章标题文章标题文章标题</div>
+          <div class="blog-item" v-for="blog in blogs">
+            <div class="title"><router-link :to="{name: 'blogDetail', params: {user: user.showUser.user, blogId: blog._id}}">{{blog.body.title}}</router-link></div>
             <div class="info-op">
-              <span class="time">2017年05月17日 13:00&nbsp;&nbsp;</span>
+              <span class="time">{{moment(blog.time).format('YYYY年MM月DD日 HH:mm')}}&nbsp;&nbsp;</span>
               <span class="blog-op">
                 <el-dropdown trigger="click" @command="handleCommand">
                   <span class="el-dropdown-link">
                     操作<i class="el-icon-caret-bottom el-icon--right"></i>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item :command="'{ type: \'delete\', id: \'123456\' }'">删除</el-dropdown-item>
-                    <el-dropdown-item :command="'{ type: \'update\', id: \'123456\' }'">编辑</el-dropdown-item>
+                    <el-dropdown-item :command="'{ type: \'delete\', id: \''+ blog._id +'\' }'">删除</el-dropdown-item>
+                    <el-dropdown-item :command="'{ type: \'update\', id: \''+ blog._id +'\' }'">编辑</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </span>
             </div>
           </div>
-          <div class="blog-item">
-            <div class="title">文章标题文章标题文章标题文章标题文章标题文章标题文章标题文章标题文章标题文章标题文章标题</div>
-            <div class="info-op">
-              <span class="time">2017年05月17日 13:00&nbsp;&nbsp;</span>
-              <span class="blog-op">
-                <el-dropdown trigger="click" @command="handleCommand">
-                  <span class="el-dropdown-link">
-                    操作<i class="el-icon-caret-bottom el-icon--right"></i>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item :command="'{ type: \'delete\', id: \'123456\' }'">删除</el-dropdown-item>
-                    <el-dropdown-item :command="'{ type: \'update\', id: \'123456\' }'">编辑</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </span>
-            </div>
-          </div>
-          <div class="blog-item">
-            <div class="title">文章标题文章标题文章标题文章标题文章标题文章标题文章标题文章标题文章标题文章标题文章标题</div>
-            <div class="info-op">
-              <span class="time">2017年05月17日 13:00&nbsp;&nbsp;</span>
-              <span class="blog-op">
-                <el-dropdown trigger="click" @command="handleCommand">
-                  <span class="el-dropdown-link">
-                    操作<i class="el-icon-caret-bottom el-icon--right"></i>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item :command="'{ type: \'delete\', id: \'123456\' }'">删除</el-dropdown-item>
-                    <el-dropdown-item :command="'{ type: \'update\', id: \'123456\' }'">编辑</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </span>
-            </div>
-          </div>
-          <div class="blog-item">
-            <div class="title">文章标题文章标题文章标题文章标题文章标题文章标题文章标题文章标题文章标题文章标题文章标题</div>
-            <div class="info-op">
-              <span class="time">2017年05月17日 13:00&nbsp;&nbsp;</span>
-              <span class="blog-op">
-                <el-dropdown trigger="click" @command="handleCommand">
-                  <span class="el-dropdown-link">
-                    操作<i class="el-icon-caret-bottom el-icon--right"></i>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item :command="'{ type: \'delete\', id: \'123456\' }'">删除</el-dropdown-item>
-                    <el-dropdown-item :command="'{ type: \'update\', id: \'123456\' }'">编辑</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </span>
-            </div>
-          </div>
+
         </div>
         <div class="page">
           <el-pagination
             layout="prev, pager, next"
-            :page-size="15"
-            :total="50">
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-size="10"
+            :total="total">
           </el-pagination>
         </div>
       </div>
       <div class="right">
         <div class="user-blog-info">
           <div class="user-avatar">
-            <img src="/upload/avatar/3333333.jpg">
+            <img :src="user.showUser.avatar">
           </div>
           <div class="blogs-info">
             <div class="user-name">
-              用户名
+              {{user.showUser.name}}
             </div>
             <div class="blog-total">
-              <span class="total">60</span>&nbsp;篇博客
+              <span class="total">{{total}}</span>&nbsp;篇博客
             </div>
           </div>
         </div>
         <div class="blog-group">
           <div class="group-top">博客分组<div class="group-op">管理</div></div>
           <div class="groups">
-            <div class="group-item selected">全部博客<div class="total">(10)</div></div>
-            <div class="group-item">组一<div class="total">(4)</div></div>
-            <div class="group-item">组二<div class="total">(2)</div></div>
+            <div class="group-item selected">全部博客<div class="total">({{total}})</div></div>
+            <div class="group-item" v-for="group in blogGroup">{{group.groupName}}<div class="total">({{group.blogs.length}})</div></div>
           </div>
         </div>
         <div class="blog-search">
@@ -120,12 +71,30 @@
 
 <script type="text/ecmascript-6">
   import router from '../../router';
+  import Vue from 'vue';
 
   export default {
+    props: {
+      user: {
+        type: Object
+      }
+    },
     data() {
       return {
-        input2: ''
+        input2: '',
+        blogs: [],
+        total: 0,
+        currentPage: 1,
+        blogGroup: []
       };
+    },
+    created() {
+      if (this.$route.query.page) {
+        this.currentPage = -(-this.$route.query.page); // 将字符串转为数字
+      }
+    },
+    mounted() {
+      this.getBlogs();
     },
     methods: {
       newBlogBtn() {
@@ -140,6 +109,46 @@
         var obj = window.eval('(' + command + ')');
 //        this.$message('click on item ' + command);
         console.log(command, obj);
+      },
+      getBlogs() {
+        var self = this;
+        self.pdzTimer.getStatus = setInterval(function () {
+          var page = self.$route.query.page || 1;
+          if (self.user.showUser.user) {
+            clearInterval(self.pdzTimer.getStatus);
+            self.$http.get('/getBlogs?user=' + self.user.showUser.user + '&page=' + page + '&pageSize=' + 10).then(response => {
+              var result = response.body;
+              if (result.result === '1') {
+                self.blogs = result.blogs;
+                self.total = result.total;
+              }
+            }, response => {
+              // error callback
+            });
+
+            self.getGroup();
+          }
+        }, 50);
+      },
+      handleCurrentChange(val) {
+        router.push({path: this.$route.path, query: {page: val}});
+        this.getBlogs();
+      },
+      getGroup() {
+        this.$http.get('/getBlogGroup?user=' + this.user.showUser.user).then(response => {
+          // success callback
+          var groups = response.body.group;
+          if (!groups) {
+            return;
+          }
+          for (var i = 0; i < groups.length; i++) {
+            // this.groupOption[i] = groups[i].groupName;
+            Vue.set(this.blogGroup, i, groups[i]);
+          }
+          console.log(groups, this.blogGroup);
+        }, response => {
+          // error callback
+        });
       }
     }
   };
@@ -175,13 +184,15 @@
             .title
               float: left
               width: 350px
-              font-size: 14px
-              color: #475669
-              white-space: nowrap
-              overflow: hidden
-              text-overflow: ellipsis
-              &:hover
-                text-decoration: underline
+              a
+                font-size: 14px
+                color: #475669
+                white-space: nowrap
+                overflow: hidden
+                text-overflow: ellipsis
+                text-decoration: none
+                &:hover
+                  text-decoration: underline
             .info-op
               float: right
               width: 240px

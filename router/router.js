@@ -868,22 +868,18 @@ exports.newBlog = function (req, res, next) {
 
 // 获取博客分组
 exports.getBlogGroup = function (req, res, next) {
-  if (req.session.login) {
-    var user = req.session.login.user;
-    BlogGroup.findOne({user: user}, function (err, bg) {
-      if (err) {
-        res.json({result: "-3"}); //服务器错误
-        return;
-      }
-      if (!bg) {
-        res.json({result: "-1"}); //没有分组
-      } else {
-        res.json({result: "1", group: bg.blogGroup}); //没有分组
-      }
-    })
-  } else {
-    res.json({result: "-3"}); //服务器错误
-  }
+  var user = req.query.user;
+  BlogGroup.findOne({user: user}, function (err, bg) {
+    if (err) {
+      res.json({result: "-3"}); //服务器错误
+      return;
+    }
+    if (!bg) {
+      res.json({result: "-1"}); //没有分组
+    } else {
+      res.json({result: "1", group: bg.blogGroup}); //没有分组
+    }
+  })
 };
 
 // 获取用户个人档
@@ -1215,5 +1211,42 @@ exports.dlMsg = function (req, res, next) {
       }
       res.json({result: '1'});
     });
+  });
+};
+
+exports.getBlogs = function (req, res, next) {
+  var query = req.query;
+
+  var obj = {
+    user: [query.user],
+    type: 'blog',
+    page: query.page - 1,
+    pageSize: query.pageSize
+  };
+
+  var blogs = [];
+
+  Log.getTotal(obj, function (err, total) {
+    Log.getStatus(obj, function (err, logs) {
+      console.log('获取博客', logs.length, total);
+      (function iterator(i) {
+        //遍历结束
+        if (i === logs.length) {
+          console.log('遍历完成');
+          res.json({
+            result: '1',
+            blogs: blogs,
+            total: total.length
+          });
+          return;
+        }
+
+        Blog.findById(logs[i].body, 'time body', function (err, blog) {
+          blogs.push(blog);
+          iterator(i + 1);
+        });
+
+      })(0);
+    })
   });
 };
