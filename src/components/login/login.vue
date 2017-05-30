@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-title data-title="登录">
     <div class="login">
       <el-row>
         <el-col :span="12">

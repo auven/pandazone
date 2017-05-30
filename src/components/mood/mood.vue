@@ -1,5 +1,5 @@
 <template>
-  <div class="mood">
+  <div class="mood" v-title data-title="说说">
     <div class="top"><span v-show="user.isLoginUser">我的说说</span><span v-show="!user.isLoginUser">Ta的说说</span></div>
     <div class="mood-main">
       <div class="left">

@@ -1,6 +1,6 @@
 <template>
-  <div class="album-detail">
-    <div class="top"><span v-show="user.isLoginUser">我的相册详情</span><span v-show="!user.isLoginUser">Ta的相册详情</span></div>
+  <div class="album-detail" v-title data-title="查看相册">
+    <div class="top"><span>查看相册</span></div>
     <div class="album-info album-info-hook">
       <div class="album-cover"><img :src="album.body.cover"></div>
       <div class="album-name-desc">

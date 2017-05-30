@@ -1,5 +1,5 @@
 <template>
-  <div class="uploadImg">
+  <div class="uploadImg" v-title data-title="新建相册">
     <div class="top"><span>新建相册</span></div>
     <div class="albumInfo">
       <el-form ref="albumInfo" :model="album" label-width="80px" label-position="left" >

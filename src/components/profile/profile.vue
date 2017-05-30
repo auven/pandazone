@@ -1,5 +1,5 @@
 <template>
-  <div class="profile">
+  <div class="profile" v-title data-title="个人档案">
     <el-form :model="profileForm" ref="profileForm" label-width="100px" class="profileForm">
       <el-form-item label="头像" prop="avatar">
         <el-upload

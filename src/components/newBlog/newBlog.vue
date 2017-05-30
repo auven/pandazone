@@ -1,5 +1,5 @@
 <template>
-  <div class="newBlog">
+  <div class="newBlog" v-title data-title="写博客">
     <div class="top">写博客</div>
     <div class="new-main">
       <el-form class="title-group" :model="newBlog" label-width="60px" label-position="left">

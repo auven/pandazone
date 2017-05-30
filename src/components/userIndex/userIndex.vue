@@ -1,5 +1,5 @@
 <template>
-  <div class="userIndex">
+  <div class="userIndex" v-title data-title="个人主页">
     <div class="left">
 
     </div>
@@ -56,6 +56,9 @@
       this.getStatus();
     },
     watch: {
+      '$route': function () {
+        this.getStatus();
+      },
       statusData: function () {
         this.$nextTick(function () {
           console.log('this.$nextTick 等dom加载完成就执行');

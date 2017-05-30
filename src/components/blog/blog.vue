@@ -1,6 +1,6 @@
 <template>
-  <div class="blog">
-    <div class="top"><span>我的博客</span></div>
+  <div class="blog" v-title data-title="博客">
+    <div class="top"><span v-show="user.isLoginUser">我的博客</span><span v-show="!user.isLoginUser">Ta的博客</span></div>
     <div class="blog-main">
       <div class="left">
         <div class="new-blog-btn"><el-button type="primary" @click="newBlogBtn">写博客</el-button></div>

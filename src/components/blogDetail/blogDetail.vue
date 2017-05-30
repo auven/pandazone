@@ -1,5 +1,5 @@
 <template>
-  <div class="blogDetail">
+  <div class="blogDetail" v-title data-title="浏览博客">
     <div class="top"><span>浏览博客</span></div>
     <div class="blog-detail">
       <div class="blog-op" v-if="blog.user === user.loginUser.user"><i class="el-icon-edit" @click="modify"></i><i class="el-icon-delete" @click="dls({id: blog._id, type: blog.type})"></i></div>

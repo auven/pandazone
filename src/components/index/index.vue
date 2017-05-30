@@ -1,5 +1,5 @@
 <template>
-  <div class="index">
+  <div class="index" v-title data-title="首页">
     <div class="left">
       <new-mood @subNewMood="getStatus"></new-mood>
       <div v-for="status in statusData">

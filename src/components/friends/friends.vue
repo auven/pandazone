@@ -1,5 +1,5 @@
 <template>
-  <div class="friends">
+  <div class="friends" v-title data-title="好友">
     <div class="left">
       <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
         <el-tab-pane label="已关注" name="first">

@@ -1,5 +1,5 @@
 <template>
-  <div class="register">
+  <div class="register" v-title data-title="注册">
     <el-steps :space="200" :active="active" class="steps">
       <el-step title="步骤 1" description="设置用户名和密码"></el-step>
       <el-step title="步骤 2" description="填写个人信息"></el-step>
