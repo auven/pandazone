@@ -15,6 +15,7 @@ import album from '@/components/album/album';
 import albumDetail from '@/components/albumDetail/albumDetail';
 import friends from '@/components/friends/friends';
 import message from '@/components/message/message';
+import blogDetail from '@/components/blogDetail/blogDetail';
 
 Vue.use(Router);
 
@@ -73,7 +74,7 @@ export default new Router({
         {
           path: 'blog/detail/:blogId',
           name: 'blogDetail',
-          component: {template: '<div>博客详情页面{{ $route.params.blogId }}</div>'}
+          component: blogDetail
         },
         {
           path: 'blog/new',

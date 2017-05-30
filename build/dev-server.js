@@ -70,6 +70,7 @@ app.get('/getFriends',router.getFriends);
 app.post('/addFriend', router.addFriend);
 app.post('/dlFriend', router.dlFriend);
 app.get('/getBlogs', router.getBlogs);
+app.get('/getBlogDetail', router.getBlogDetail);
 
 var compiler = webpack(webpackConfig)
 

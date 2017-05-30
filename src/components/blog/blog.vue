@@ -109,6 +109,10 @@
         var obj = window.eval('(' + command + ')');
 //        this.$message('click on item ' + command);
         console.log(command, obj);
+        if (obj.type === 'delete') {
+          console.log('shanchu');
+          this.dls(obj.id);
+        }
       },
       getBlogs() {
         var self = this;
@@ -148,6 +152,29 @@
           console.log(groups, this.blogGroup);
         }, response => {
           // error callback
+        });
+      },
+      dls(id) {
+        this.$confirm('此操作将永久删除该说说, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$http.post('/dl', {
+            type: 'blog',
+            id: id
+          }).then(response => {
+            var result = response.body;
+            if (result.result === '1') {
+              this.$message.success('删除说说成功');
+              this.getBlogs();
+            }
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
         });
       }
     }

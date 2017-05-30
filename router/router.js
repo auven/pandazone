@@ -446,11 +446,29 @@ exports.dl = function (req, res, next) {
       });
     } else if (type === 'blog') {
       Blog.findOne({_id: id}, function (err, blog) {
-        BlogGroup.rmFromGroup({
-          id: id,
-          user: blog.user,
-          groupName: blog.group
-        }, function (err) {
+        console.log(blog);
+        if (blog.group) {
+          BlogGroup.rmFromGroup({
+            id: id,
+            user: blog.user,
+            groupName: blog.group
+          }, function (err) {
+            Blog.remove({_id: id}, function (err) {
+              if (err) {
+                res.json({result: "-3"}); //删除失败
+                return;
+              }
+              Log.remove({body: id}, function (err1) {
+                if (err1) {
+                  res.json({result: "-3"}); //删除失败
+                  return;
+                }
+                console.log('删除成功');
+                res.json({result: '1'});
+              })
+            });
+          });
+        } else {
           Blog.remove({_id: id}, function (err) {
             if (err) {
               res.json({result: "-3"}); //删除失败
@@ -465,7 +483,8 @@ exports.dl = function (req, res, next) {
               res.json({result: '1'});
             })
           });
-        });
+        }
+
       });
     }
 
@@ -1248,5 +1267,62 @@ exports.getBlogs = function (req, res, next) {
 
       })(0);
     })
+  });
+};
+
+exports.getBlogDetail = function (req, res, next) {
+  var blogId = req.query.blogId;
+
+  Blog.findById(blogId, function (err, blog) {
+    if (err) {
+      res.json({result: "-3"}); //服务器错误
+      return;
+    }
+
+    var blogData = {};
+    blogData._id = blog._id;
+    blogData.type = blog.type;
+    blogData.user = blog.user;
+    blogData.time = blog.time;
+    blogData.group = blog.group;
+    blogData.body = blog.body;
+    blogData.thumbsUp = [];
+    blogData.comments = [];
+
+    // 查询点赞里的用户的name和avatar
+    (function iterator1(j) {
+      if (j === blog.thumbsUp.length) {
+
+        // 查询评论里的用户的name和avatar
+        (function iterator2(k) {
+          if (k === blog.comments.length) {
+            res.json({result: '1', blog: blogData});
+            return;
+          }
+          User.findOne({user: blog.comments[k].user}, 'name avatar', function (err, user) {
+            var comments = {
+              user: blog.comments[k].user,
+              name: user.name,
+              avatar: user.avatar,
+              time: blog.comments[k].time,
+              content: blog.comments[k].content,
+              _id: blog.comments[k]._id
+            };
+            blogData.comments.push(comments);
+            iterator2(k + 1);
+          })
+        })(0);
+        return;
+      }
+      User.findOne({user: blog.thumbsUp[j].user}, 'name', function (err, user) {
+        var thumbsUp = {
+          user: blog.thumbsUp[j].user,
+          name: user.name
+        };
+        blogData.thumbsUp.push(thumbsUp);
+        iterator1(j + 1);
+      })
+    })(0);
+
   });
 };
