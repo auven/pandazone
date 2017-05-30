@@ -79,6 +79,9 @@
               if (this.pdzTimer.getStatus) {
                 clearInterval(this.pdzTimer.getStatus);
               }
+              if (this.pdzTimer.setEditor) {
+                clearInterval(this.pdzTimer.setEditor);
+              }
               router.push({name: 'login'});
             }
           }

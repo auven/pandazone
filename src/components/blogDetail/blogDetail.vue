@@ -2,11 +2,11 @@
   <div class="blogDetail">
     <div class="top"><span>浏览博客</span></div>
     <div class="blog-detail">
-      <div class="blog-op" v-if="blog.user === user.loginUser.user"><i class="el-icon-edit"></i><i class="el-icon-delete" @click="dls({id: blog._id, type: blog.type})"></i></div>
+      <div class="blog-op" v-if="blog.user === user.loginUser.user"><i class="el-icon-edit" @click="modify"></i><i class="el-icon-delete" @click="dls({id: blog._id, type: blog.type})"></i></div>
       <div class="blog-title">
         <div class="title">{{blog.body.title}}</div>
         <div class="info">
-          <span>赞：{{blog.thumbsUp.length}}&nbsp;&nbsp;|&nbsp;&nbsp;</span><span>评论：{{blog.comments.length}}&nbsp;&nbsp;|&nbsp;&nbsp;</span><span>浏览：{{blog.body.visits}}</span>
+          <span>{{moment(blog.time).format('YYYY年MM月DD日 HH:mm')}}&nbsp;&nbsp;|&nbsp;&nbsp;</span><span>赞：{{blog.thumbsUp.length}}&nbsp;&nbsp;|&nbsp;&nbsp;</span><span>评论：{{blog.comments.length}}&nbsp;&nbsp;|&nbsp;&nbsp;</span><span>浏览：{{blog.body.visits}}</span>
         </div>
       </div>
       <div class="blog-content">
@@ -180,6 +180,9 @@
             message: '已取消删除'
           });
         });
+      },
+      modify() {
+        router.push({name: 'blogModify', params: {user: this.user.showUser.user, blogId: this.blog._id}});
       }
     }
   };

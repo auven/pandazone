@@ -71,6 +71,7 @@ app.post('/addFriend', router.addFriend);
 app.post('/dlFriend', router.dlFriend);
 app.get('/getBlogs', router.getBlogs);
 app.get('/getBlogDetail', router.getBlogDetail);
+app.post('/modifyBlog', router.modifyBlog);
 
 var compiler = webpack(webpackConfig)
 

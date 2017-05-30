@@ -1326,3 +1326,22 @@ exports.getBlogDetail = function (req, res, next) {
 
   });
 };
+
+exports.modifyBlog = function (req, res, next) {
+  var form = new formidable.IncomingForm();
+  form.parse(req, function (err, fields, files) {
+    // var group = fields.group;
+    var id = fields.id;
+    var title = fields.title;
+    var content = fields.content;
+
+    Blog.update({_id: id}, {$set:{ body: { title: title, content: content}}}, function (err) {
+      if (err) {
+        res.json({result: "-3"}); //服务器错误
+        return;
+      }
+      console.log('更新成功');
+      res.json({result: '1'});
+    });
+  });
+};

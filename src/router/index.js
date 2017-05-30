@@ -16,6 +16,7 @@ import albumDetail from '@/components/albumDetail/albumDetail';
 import friends from '@/components/friends/friends';
 import message from '@/components/message/message';
 import blogDetail from '@/components/blogDetail/blogDetail';
+import blogModify from '@/components/blogModify/blogModify';
 
 Vue.use(Router);
 
@@ -82,9 +83,9 @@ export default new Router({
           component: newBlog
         },
         {
-          path: 'blog/modify',
+          path: 'blog/modify/:blogId',
           name: 'blogModify',
-          component: {template: '<div>修改博客页面</div>'}
+          component: blogModify
         },
         {
           path: 'album',

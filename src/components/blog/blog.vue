@@ -113,6 +113,10 @@
           console.log('shanchu');
           this.dls(obj.id);
         }
+        if (obj.type === 'update') {
+          console.log('修改');
+          this.modify(obj.id);
+        }
       },
       getBlogs() {
         var self = this;
@@ -176,6 +180,9 @@
             message: '已取消删除'
           });
         });
+      },
+      modify(id) {
+        router.push({name: 'blogModify', params: {user: this.user.showUser.user, blogId: id}});
       }
     }
   };
