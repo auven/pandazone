@@ -3,13 +3,13 @@
     <div class="top"><span v-show="user.isLoginUser">我的博客</span><span v-show="!user.isLoginUser">Ta的博客</span></div>
     <div class="blog-main">
       <div class="left">
-        <div class="new-blog-btn"><el-button type="primary" @click="newBlogBtn">写博客</el-button></div>
+        <div class="new-blog-btn" v-if="user.isLoginUser"><el-button type="primary" @click="newBlogBtn">写博客</el-button></div>
         <div class="blog-main-wrap">
           <div class="blog-item" v-for="blog in blogs">
             <div class="title"><router-link :to="{name: 'blogDetail', params: {user: user.showUser.user, blogId: blog._id}}">{{blog.body.title}}</router-link></div>
             <div class="info-op">
               <span class="time">{{moment(blog.time).format('YYYY年MM月DD日 HH:mm')}}&nbsp;&nbsp;</span>
-              <span class="blog-op">
+              <span class="blog-op" v-if="user.isLoginUser">
                 <el-dropdown trigger="click" @command="handleCommand">
                   <span class="el-dropdown-link">
                     操作<i class="el-icon-caret-bottom el-icon--right"></i>
@@ -24,7 +24,7 @@
           </div>
 
         </div>
-        <div class="page">
+        <div class="page" v-if="blogs.length > 0">
           <el-pagination
             layout="prev, pager, next"
             @current-change="handleCurrentChange"
@@ -159,7 +159,7 @@
         });
       },
       dls(id) {
-        this.$confirm('此操作将永久删除该说说, 是否继续?', '提示', {
+        this.$confirm('此操作将永久删除该博客, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -170,7 +170,7 @@
           }).then(response => {
             var result = response.body;
             if (result.result === '1') {
-              this.$message.success('删除说说成功');
+              this.$message.success('删除博客成功');
               this.getBlogs();
             }
           });

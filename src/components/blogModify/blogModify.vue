@@ -94,7 +94,7 @@
         }).then(response => {
           var result = response.body;
           if (result.result === '1') {
-            this.$message.success('发表说说成功');
+            this.$message.success('修改博客成功');
             router.push({name: 'blogDetail', params: {user: this.user.showUser.user, blogId: this.blog._id}});
           }
         }, response => {

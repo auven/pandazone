@@ -117,7 +117,7 @@
     methods: {
       dls(op) {
         console.log(op);
-        this.$confirm('此操作将永久删除该说说, 是否继续?', '提示', {
+        this.$confirm('此操作将永久删除该内容, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -128,7 +128,7 @@
           }).then(response => {
             var result = response.body;
             if (result.result === '1') {
-              this.$message.success('删除说说成功');
+              this.$message.success('删除成功');
               this.$emit('refresh');
             }
           });
@@ -166,7 +166,7 @@
         }).then(response => {
           var result = response.body;
           if (result.result === '1') {
-            this.$message.success('发表pinglun成功');
+            this.$message.success('发表评论成功');
             this.$emit('refresh');
             this.content = '';
             this.showNewComment = false;
@@ -190,7 +190,7 @@
           }).then(response => {
             var result = response.body;
             if (result.result === '1') {
-              this.$message.success('删除说说成功');
+              this.$message.success('删除评论成功');
               this.$emit('refresh');
             }
           });

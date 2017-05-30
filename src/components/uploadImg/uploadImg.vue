@@ -65,7 +65,7 @@
         }).then(response => {
           var result = response.body;
           if (result.result === '1') {
-            this.$message.success('发表说说成功');
+            this.$message.success('新建相册成功');
             this.moodText = '';
             this.moodImg = [];
             this.showAddImg = false;

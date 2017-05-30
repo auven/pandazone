@@ -1,7 +1,7 @@
 <template>
   <div class="album" v-title data-title="相册">
     <div class="top"><span v-show="user.isLoginUser">我的相册</span><span v-show="!user.isLoginUser">Ta的相册</span></div>
-    <div class="album-op">
+    <div class="album-op" v-if="user.isLoginUser">
       <el-button type="primary" class="upload-img">上传照片</el-button>
       <el-button class="new-album" @click="newAlbum">创建相册</el-button>
     </div>

@@ -2,7 +2,7 @@
   <div class="blogDetail" v-title data-title="浏览博客">
     <div class="top"><span>浏览博客</span></div>
     <div class="blog-detail">
-      <div class="blog-op" v-if="blog.user === user.loginUser.user"><i class="el-icon-edit" @click="modify"></i><i class="el-icon-delete" @click="dls({id: blog._id, type: blog.type})"></i></div>
+      <div class="blog-op" v-if="user.isLoginUser"><i class="el-icon-edit" @click="modify"></i><i class="el-icon-delete" @click="dls({id: blog._id, type: blog.type})"></i></div>
       <div class="blog-title">
         <div class="title">{{blog.body.title}}</div>
         <div class="info">
@@ -126,7 +126,7 @@
         }).then(response => {
           var result = response.body;
           if (result.result === '1') {
-            this.$message.success('发表pinglun成功');
+            this.$message.success('发表评论成功');
             this.getBlogDetail();
             this.content = '';
           }
@@ -146,7 +146,7 @@
           }).then(response => {
             var result = response.body;
             if (result.result === '1') {
-              this.$message.success('删除说说成功');
+              this.$message.success('删除评论成功');
               this.getBlogDetail();
             }
           });
@@ -159,7 +159,7 @@
       },
       dls(op) {
         console.log(op);
-        this.$confirm('此操作将永久删除该说说, 是否继续?', '提示', {
+        this.$confirm('此操作将永久删除该博客, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -170,7 +170,7 @@
           }).then(response => {
             var result = response.body;
             if (result.result === '1') {
-              this.$message.success('删除说说成功');
+              this.$message.success('删除博客成功');
               router.push({name: 'blog', params: {user: this.user.showUser.user}});
             }
           });

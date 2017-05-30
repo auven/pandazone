@@ -1,6 +1,3 @@
-/**
- * Created by auven on 2017/5/4.
- */
 var mongoose = require('mongoose');
 var db = require("./dbs.js");
 

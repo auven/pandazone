@@ -21,7 +21,7 @@
       <router-link :to="'/' + user.loginUser.user + '/profile'">
         <img :src="user.loginUser.avatar">
       </router-link>
-      <router-link class="name" :to="'/' + user.loginUser.user + '/profile'">
+      <router-link class="name" :to="'/' + user.loginUser.user">
         <span>{{ user.loginUser.name }}</span>
       </router-link>
       <span class="exit" @click="exit"><i class="icon-tuichu"></i>退出</span>

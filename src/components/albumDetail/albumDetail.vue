@@ -12,7 +12,7 @@
         <div class="visits">浏览：1000+</div>
       </div>
     </div>
-    <div class="album-detail-op">
+    <div class="album-detail-op" v-if="user.isLoginUser">
       <el-button type="primary" class="upload-img">上传照片</el-button>
       <el-button class="update-album" @click="updateAlbum" v-if="isShow">编辑相册</el-button>
       <el-button type="primary" class="update-album" @click="updateAlbumSubmit" v-if="!isShow">完成</el-button>
