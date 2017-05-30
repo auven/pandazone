@@ -47,6 +47,7 @@ userSchema.statics.dlMsg = function (obj, callback) {
   this.model('User').update({user: obj.user}, {$pull: {messages: {_id: obj.messageId}}}, callback);
 };
 
+// 添加好友
 userSchema.statics.addFriend = function (obj, callback) {
   this.model('User').findOne({user: obj.user}, function (err, user) {
     if (!user) {
@@ -57,6 +58,7 @@ userSchema.statics.addFriend = function (obj, callback) {
   })
 };
 
+// 删除好友
 userSchema.statics.dlFriend = function (obj, callback) {
   this.model('User').update({user: obj.user}, {$pull: {friends: {user: obj.friend}}}, callback);
 };

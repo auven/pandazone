@@ -33,6 +33,7 @@ logSchema.statics.getStatus = function (obj, callback) {
   }
 };
 
+// 获取总条数
 logSchema.statics.getTotal = function (obj, callback) {
   if (obj.type === 'all') {
     this.model('Log')

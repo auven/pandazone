@@ -1,12 +1,14 @@
-//引入db和md5文件
+//引入配置和相关文件、包
 var formidable = require("formidable");
 var db = require('../models/db.js');
 var md5 = require('../models/md5.js');
 var path = require("path");
 var fs = require("fs");
 
+// 验证码第三方包
 var svgCaptcha = require('svg-captcha');
 
+// 数据库模块
 var User = require('../models/User.js');
 var Log = require('../models/Log.js');
 var Mood = require('../models/Mood.js');
@@ -15,60 +17,6 @@ var BlogGroup = require('../models/BlogGroup.js');
 var Album = require('../models/Album.js');
 
 //注册业务
-// exports.doRegist = function (req, res, next) {
-//   //得到用户填写的东西
-//   var form = new formidable.IncomingForm();
-//   form.parse(req, function (err, fields, files) {
-//     //得到表单之后做的事情
-//     var user = fields.user;
-//     var name = fields.name;
-//     var pass = fields.pass;
-//     var email = fields.email;
-//     var avatar = fields.avatar || "moren.jpg";
-//     var sex = fields.sex;
-//     var born = fields.born;
-//     var city = fields.city;
-//     var hobby = fields.hobby;
-//     var label = fields.label;
-//     var sign = fields.sign;
-//
-//     //查询数据库中是不是有这个人
-//     db.find("users", {"user": user}, function (err, result) {
-//       if (err) {
-//         res.send("-3"); //服务器错误
-//         return;
-//       }
-//       if (result.length !== 0) {
-//         res.send("-1"); //被占用
-//         return;
-//       }
-//       //设置md5加密
-//       pass = md5(md5(pass) + "考拉");
-//       //现在可以证明，用户名没有被占用
-//       db.insertOne("users", {
-//         "user": user,
-//         "name": name,
-//         "pass": pass,
-//         "email": email,
-//         "avatar": avatar,
-//         "sex": sex,
-//         "born": born,
-//         "city": city,
-//         "hobby": hobby,
-//         "label": label,
-//         "sign": sign
-//       }, function (err, result) {
-//         if (err) {
-//           res.send("-3"); //服务器错误
-//           return;
-//         }
-//
-//         res.send("1"); //注册成功，写入session
-//       })
-//     })
-//   });
-// };
-// 使用mongoose进行注册业务
 exports.doRegist = function (req, res, next) {
   var form = new formidable.IncomingForm();
   form.parse(req, function (err, fields, files) {
@@ -77,7 +25,6 @@ exports.doRegist = function (req, res, next) {
     var avatarDir = fs.existsSync("./server/upload/avatar");
 
     if (!avatarDir) {
-      console.log('创建upload/avatar文件夹');
       fs.mkdirSync("./server/upload/avatar");
     }
 
@@ -145,7 +92,6 @@ exports.doRegist = function (req, res, next) {
   });
 };
 
-
 // 获取城市列表
 exports.getCitys = function (req, res, next) {
   db.find("citys", {}, function (err, result) {
@@ -156,6 +102,7 @@ exports.getCitys = function (req, res, next) {
     res.json(result[0].citys);
   });
 };
+
 // 生成验证码
 exports.getCaptcha = function (req, res, next) {
   var captcha = svgCaptcha.create();
@@ -172,22 +119,6 @@ exports.checkCaptcha = function (req, res, next) {
 };
 
 // 查找数据库中是否有这个用户
-// exports.findUser = function (req, res, next) {
-//   var user = req.params["user"];
-//   //查询数据库中是不是有这个人
-//   db.find("users", {"user": user}, function (err, result) {
-//     if (err) {
-//       res.send("-3"); //服务器错误
-//       return;
-//     }
-//     if (result.length !== 0) {
-//       res.send("-1"); //被占用
-//     } else {
-//       res.send("1");
-//     }
-//   });
-// };
-// 使用mongoose查找数据库中是否有这个用户
 exports.findUser = function (req, res, next) {
   var user = req.params["user"];
   //查询数据库中是不是有这个人
@@ -199,14 +130,14 @@ exports.findUser = function (req, res, next) {
     if (result.length !== 0) {
       res.send("-1"); //被占用
     } else {
-      res.send("1");
+      res.send("1"); // 没有被占用，可以注册
     }
   })
 };
 
 // 上传图片
 exports.uploadTemp = function (req, res, next) {
-  // 先判断upload/avatar文件夹是否存在，不存在就创建
+  // 先判断upload/temp文件夹是否存在，不存在就创建
   var uploadDir = fs.existsSync("./server/upload");
   var tempDir = fs.existsSync("./server/upload/temp");
 
@@ -216,20 +147,17 @@ exports.uploadTemp = function (req, res, next) {
   }
 
   if (!tempDir) {
-    console.log('创建upload/avatar文件夹');
+    console.log('创建upload/temp文件夹');
     fs.mkdirSync("./server/upload/temp");
   }
-
 
   var form = new formidable.IncomingForm();
   form.uploadDir = path.normalize(__dirname + "/../upload/temp");
   form.parse(req, function (err, fields, files) {
-    // console.log(files);
     var oldpath = files.avatar.path;
     // 将路径字符串转换成对象
     var pathObj = path.parse(oldpath);
     var oldName = pathObj.name;
-    console.log(pathObj, oldName);
     var newName = oldName + ".jpg";
     var newpath = path.normalize(__dirname + "/../upload/temp") + "/" + newName;
     fs.rename(oldpath, newpath, function (err) {
@@ -306,6 +234,7 @@ exports.checkLogin = function (req, res, next) {
         return;
       }
       var isLoginUser = true;
+      // 如果user存在，且不为登录的用户
       if (user !== '' && user !== login.user) {
         User.find({"user": user}, 'name avatar visits', function (err, result1) {
           if (result1.length === 0) {
@@ -321,7 +250,7 @@ exports.checkLogin = function (req, res, next) {
             });
           }
         });
-      } else {
+      } else { // user不存在或等于登录用户
         res.json({
           result: "1",
           login: {user: login.user, name: result[0].name, avatar: result[0].avatar, visits: result[0].visits},
@@ -390,7 +319,6 @@ exports.newMood = function (req, res, next) {
       }
     }
 
-
     Mood.create({
       time: time,
       user: user,
@@ -413,7 +341,7 @@ exports.newMood = function (req, res, next) {
           res.json({result: "-3"}); //服务器错误
           return;
         }
-        console.log('发表成功');
+        console.log('发表说说成功');
         res.json({result: '1'});
       });
     })
@@ -422,7 +350,7 @@ exports.newMood = function (req, res, next) {
 
 };
 
-// 删除说说
+// 删除
 exports.dl = function (req, res, next) {
   var form = new formidable.IncomingForm();
   form.parse(req, function (err, fields, files) {
@@ -491,7 +419,7 @@ exports.dl = function (req, res, next) {
   });
 };
 
-// 添加说说评论
+// 添加评论
 exports.addComment = function (req, res, next) {
   var form = new formidable.IncomingForm();
   form.parse(req, function (err, fields, files) {
@@ -532,7 +460,7 @@ exports.addComment = function (req, res, next) {
   });
 };
 
-// 删除说说评论
+// 删除评论
 exports.dlComment = function (req, res, next) {
   var form = new formidable.IncomingForm();
   form.parse(req, function (err, fields, files) {
@@ -801,19 +729,6 @@ exports.getStatus = function (req, res, next) {
   }
 };
 
-exports.newLog = function (req, res, next) {
-  Log.create({
-    type: 'album',
-    time: (new Date()).getTime(),
-    user: 'gyt',
-    name: '高玉婷',
-    avatar: 'aksdjkasdas',
-    body: '590b4af6b5002c025778586b'
-  }, function (err, log) {
-    res.send('插入成功');
-  })
-};
-
 // 新建博客
 exports.newBlog = function (req, res, next) {
   var form = new formidable.IncomingForm();
@@ -861,7 +776,7 @@ exports.newBlog = function (req, res, next) {
               res.json({result: "-3"}); //服务器错误
               return;
             }
-            console.log('发表成功');
+            console.log('新建博客成功');
             res.json({result: '1'});
           });
         })
@@ -877,7 +792,7 @@ exports.newBlog = function (req, res, next) {
             res.json({result: "-3"}); //服务器错误
             return;
           }
-          console.log('发表成功');
+          console.log('新建博客成功');
           res.json({result: '1'});
         });
       }
@@ -896,7 +811,7 @@ exports.getBlogGroup = function (req, res, next) {
     if (!bg) {
       res.json({result: "-1"}); //没有分组
     } else {
-      res.json({result: "1", group: bg.blogGroup}); //没有分组
+      res.json({result: "1", group: bg.blogGroup});
     }
   })
 };
@@ -961,13 +876,13 @@ exports.updateProfile = function (req, res, next) {
         var newpath = path.normalize(__dirname + "/../upload/avatar") + "/" + newName;
         fs.rename(oldpath, newpath);
       }
-      console.log('注册成功');
+      console.log('更新个人档成功');
       req.session.login = {
         user: user,
         name: name,
         avatar: avatar
       };
-      res.json({result: "1"}); // 注册成功
+      res.json({result: "1"}); // 更新个人档成功
     })
 
   });
@@ -975,9 +890,9 @@ exports.updateProfile = function (req, res, next) {
 
 };
 
-
+// 新建相册
 exports.newAlbum = function (req, res, next) {
-  // 先判断upload/moodImg文件夹是否存在，不存在就创建
+  // 先判断upload/album文件夹是否存在，不存在就创建
   var avatarDir = fs.existsSync("./server/upload/album");
 
   if (!avatarDir) {
@@ -992,10 +907,8 @@ exports.newAlbum = function (req, res, next) {
     var body = fields.body;
 
     for (var i = 0; i < body.photos.length; i++) {
-      console.log(body.photos[i]);
       var oldpath = path.normalize(__dirname + "/.." + body.photos[i]);
       var newName = time.getTime() + '(' + i + ')' + ".jpg";
-      console.log(newName);
       var newpath = path.normalize(__dirname + "/../upload/album") + "/" + newName;
       fs.renameSync(oldpath, newpath);
       body.photos[i] = "/upload/album/" + newName;
@@ -1020,6 +933,7 @@ exports.newAlbum = function (req, res, next) {
   });
 };
 
+// 获取相册
 exports.getAlbum = function (req, res, next) {
   var query = req.query;
   var user = query.user;
@@ -1035,6 +949,7 @@ exports.getAlbum = function (req, res, next) {
     });
 };
 
+// 通过相册id获取相册里的图片
 exports.getAlbumById = function (req, res, next) {
   var id = req.query.id;
   Album.findOne({_id: id}, function (err, album) {
@@ -1046,6 +961,7 @@ exports.getAlbumById = function (req, res, next) {
   });
 };
 
+// 获取好友
 exports.getFriends = function (req, res, next) {
   var user = req.session.login.user;
   User.findOne({user: user}, 'friends', function (err, user1) {
@@ -1097,6 +1013,7 @@ exports.getFriends = function (req, res, next) {
   })
 };
 
+// 添加好友
 exports.addFriend = function (req, res, next) {
   var form = new formidable.IncomingForm();
   form.parse(req, function (err, fields, files) {
@@ -1121,6 +1038,7 @@ exports.addFriend = function (req, res, next) {
   });
 };
 
+// 删除好友
 exports.dlFriend = function (req, res, next) {
   var form = new formidable.IncomingForm();
   form.parse(req, function (err, fields, files) {
@@ -1143,6 +1061,7 @@ exports.dlFriend = function (req, res, next) {
   });
 };
 
+// 新建留言
 exports.newMsg = function (req, res, next) {
   var form = new formidable.IncomingForm();
   form.parse(req, function (err, fields, files) {
@@ -1208,10 +1127,10 @@ exports.getMsg = function (req, res, next) {
       })
     })(0);
 
-
   })
 };
 
+// 删除留言
 exports.dlMsg = function (req, res, next) {
   var form = new formidable.IncomingForm();
   form.parse(req, function (err, fields, files) {
@@ -1233,6 +1152,7 @@ exports.dlMsg = function (req, res, next) {
   });
 };
 
+// 获取博客
 exports.getBlogs = function (req, res, next) {
   var query = req.query;
 
@@ -1247,7 +1167,6 @@ exports.getBlogs = function (req, res, next) {
 
   Log.getTotal(obj, function (err, total) {
     Log.getStatus(obj, function (err, logs) {
-      console.log('获取博客', logs.length, total);
       (function iterator(i) {
         //遍历结束
         if (i === logs.length) {
@@ -1270,6 +1189,7 @@ exports.getBlogs = function (req, res, next) {
   });
 };
 
+// 获取博客详情
 exports.getBlogDetail = function (req, res, next) {
   var blogId = req.query.blogId;
 
@@ -1327,6 +1247,7 @@ exports.getBlogDetail = function (req, res, next) {
   });
 };
 
+// 修改博客
 exports.modifyBlog = function (req, res, next) {
   var form = new formidable.IncomingForm();
   form.parse(req, function (err, fields, files) {
@@ -1340,7 +1261,7 @@ exports.modifyBlog = function (req, res, next) {
         res.json({result: "-3"}); //服务器错误
         return;
       }
-      console.log('更新成功');
+      console.log('更新博客成功');
       res.json({result: '1'});
     });
   });

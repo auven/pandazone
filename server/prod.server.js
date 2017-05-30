@@ -1,6 +1,3 @@
-/**
- * Created by auven on 2017/5/14.
- */
 var express = require('express');
 var session = require('express-session');
 var router = require('./router/router.js');
@@ -20,7 +17,7 @@ app.use(session({
 }));
 
 //设置路由
-//注册业务
+//上传的文件放置的位置
 app.use("/upload",express.static("./server/upload"));
 app.post('/doregister',router.doRegist);
 app.get('/getCitys',router.getCitys);
@@ -57,7 +54,7 @@ app.get('/getBlogs', router.getBlogs);
 app.get('/getBlogDetail', router.getBlogDetail);
 app.post('/modifyBlog', router.modifyBlog);
 
-
+//静态网页文件放置的位置
 app.use(express.static('./dist'));
 
 app.listen('5200');
