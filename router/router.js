@@ -95,8 +95,6 @@ exports.doRegist = function (req, res, next) {
     var sign = fields.sign;
 
 
-
-
     //查询数据库中是不是有这个人
     User.find({"user": user}, function (err, result) {
       if (err) {
@@ -393,7 +391,6 @@ exports.newMood = function (req, res, next) {
     }
 
 
-
     Mood.create({
       time: time,
       user: user,
@@ -621,7 +618,7 @@ exports.getStatus = function (req, res, next) {
   var obj = {
     user: [query.user],
     type: query.type,
-    page: query.page-1,
+    page: query.page - 1,
     pageSize: query.pageSize
   };
 
@@ -793,7 +790,7 @@ exports.newLog = function (req, res, next) {
     name: '高玉婷',
     avatar: 'aksdjkasdas',
     body: '590b4af6b5002c025778586b'
-  },function (err, log) {
+  }, function (err, log) {
     res.send('插入成功');
   })
 };
@@ -892,7 +889,7 @@ exports.getBlogGroup = function (req, res, next) {
 // 获取用户个人档
 exports.getUserProfile = function (req, res, next) {
   var user = req.session.login.user;
-  User.findOne({user: user}, 'avatar name email sex born city hobby label sign' ,function (err, user) {
+  User.findOne({user: user}, 'avatar name email sex born city hobby label sign', function (err, user) {
     if (err) {
       res.json({result: "-3"}); //服务器错误
       return;
@@ -926,17 +923,19 @@ exports.updateProfile = function (req, res, next) {
     var label = JSON.stringify(fields.label);
     var sign = fields.sign;
 
-    User.update({user: user}, {$set: {
-      name: name,
-      email: email,
-      avatar: avatar,
-      sex: sex,
-      born: born,
-      city: city,
-      hobby: hobby,
-      label: label,
-      sign: sign
-    }}, function (err) {
+    User.update({user: user}, {
+      $set: {
+        name: name,
+        email: email,
+        avatar: avatar,
+        sex: sex,
+        born: born,
+        city: city,
+        hobby: hobby,
+        label: label,
+        sign: sign
+      }
+    }, function (err) {
       if (err) {
         res.send("-3"); //服务器错误
         return;
@@ -1041,28 +1040,180 @@ exports.getFriends = function (req, res, next) {
     }
 
     var userData = [];
-    User.find({user: {'$in': friends}}, function (err, user2) {
+    var notFriend = [];
+    User.find({user: {'$in': friends}}, 'user name avatar sex city friends', function (err, user2) {
       if (err) {
         res.send('-3');
         return;
       }
+
       for (var i = 0; i < user2.length; i++) {
+        var frd = {};
+        frd.user = user2[i].user;
+        frd.name = user2[i].name;
+        frd.avatar = user2[i].avatar;
+        frd.sex = user2[i].sex;
+        frd.city = user2[i].city;
+        frd.eachFocus = false;
+
         for (var j = 0; j < user2[i].friends.length; j++) {
           if (user === user2[i].friends[j].user) {
-            user2[i].friends[j].eachFocus = true;
+            frd.eachFocus = true;
           }
         }
-        userData.push(user2[i]);
+        userData.push(frd);
       }
 
-      User.find({user: {'$nin': friends}}, function (err, user3) {
+      User.find({user: {'$nin': friends}}, 'user name avatar sex city', function (err, user3) {
         if (err) {
           res.send('-3');
           return;
         }
-        res.json({result: '1', isFriend: userData, notFriend: user3});
+
+        for (var i = 0; i < user3.length; i++) {
+          if (user3[i].user !== user) {
+            notFriend.push(user3[i]);
+          }
+        }
+        res.json({result: '1', isFriend: userData, notFriend: notFriend});
       });
 
     })
   })
+};
+
+exports.addFriend = function (req, res, next) {
+  var form = new formidable.IncomingForm();
+  form.parse(req, function (err, fields, files) {
+    var friend = fields.friend;
+    var user = req.session.login.user;
+
+    var obj = {
+      user: user,
+      body: {
+        user: friend
+      }
+    };
+
+    User.addFriend(obj, function (err) {
+      if (err) {
+        res.json({result: "-3"}); //服务器错误
+        return;
+      }
+      res.json({result: '1'});
+    });
+
+  });
+};
+
+exports.dlFriend = function (req, res, next) {
+  var form = new formidable.IncomingForm();
+  form.parse(req, function (err, fields, files) {
+    var friend = fields.friend;
+    var user = req.session.login.user;
+
+    var obj = {
+      user: user,
+      friend: friend
+    };
+
+    User.dlFriend(obj, function (err) {
+      if (err) {
+        res.json({result: "-3"}); //服务器错误
+        return;
+      }
+      res.json({result: '1'});
+    });
+
+  });
+};
+
+exports.newMsg = function (req, res, next) {
+  var form = new formidable.IncomingForm();
+  form.parse(req, function (err, fields, files) {
+    var user = fields.user;
+    var author = req.session.login.user;
+    var content = fields.content;
+
+    var message = {
+      user: user,
+      body: {
+        author: author,
+        time: new Date(),
+        content: content
+      }
+    };
+
+    User.message(message, function (err) {
+      if (err) {
+        res.json({result: "-3"}); //服务器错误
+        return;
+      }
+      console.log('留言成功');
+      res.json({result: '1'});
+    });
+
+  });
+};
+
+// 获取留言内容
+exports.getMsg = function (req, res, next) {
+  var query = req.query;
+  var user = query.user;
+
+  var messages = [];
+
+  User.findOne({user: user}, 'messages', function (err, user) {
+    if (err) {
+      res.send("-3"); //服务器错误
+      return;
+    }
+
+    (function iterator(i) {
+
+      if (i === user.messages.length) {
+        res.json({result: '1', messages: messages});
+        return;
+      }
+
+      var msg = user.messages[i];
+      var message = {};
+      message._id = msg._id;
+      message.author = msg.author;
+      message.time = msg.time;
+      message.content = msg.content;
+      message.name = '';
+      message.avatar = '';
+
+      User.findOne({user: msg.author}, 'name avatar', function (err, user) {
+        message.name = user.name;
+        message.avatar = user.avatar;
+        messages.push(message);
+        iterator(i + 1);
+      })
+    })(0);
+
+
+  })
+};
+
+exports.dlMsg = function (req, res, next) {
+  var form = new formidable.IncomingForm();
+  form.parse(req, function (err, fields, files) {
+    var user = fields.user;
+    var messageId = fields.messageId;
+
+    var message = {
+      user: user,
+      messageId: messageId
+    };
+
+    User.dlMsg(message, function (err) {
+      if (err) {
+        res.json({result: "-3"}); //服务器错误
+        return;
+      }
+      res.json({result: '1'});
+    });
+  });
 };

@@ -14,6 +14,7 @@ import uploadImg from '@/components/uploadImg/uploadImg';
 import album from '@/components/album/album';
 import albumDetail from '@/components/albumDetail/albumDetail';
 import friends from '@/components/friends/friends';
+import message from '@/components/message/message';
 
 Vue.use(Router);
 
@@ -107,7 +108,7 @@ export default new Router({
         {
           path: 'message',
           name: 'message',
-          component: {template: '<div>留言页面</div>'}
+          component: message
         },
         {
           path: 'friends',

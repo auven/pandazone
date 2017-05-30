@@ -3,202 +3,55 @@
     <div class="left">
       <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
         <el-tab-pane label="已关注" name="first">
-          <router-link to="/" class="friends-item">
-            <div class="avatar"></div>
+          <router-link v-for="(friend, key) in isFriend" v-if="!friend.eachFocus" :to="'/' + friend.user" :key="key" class="friends-item">
+            <div class="avatar"><img :src="friend.avatar"></div>
             <div class="info">
               <div class="name">
-                用户名
+                {{friend.name}}
               </div>
-              <div class="focus yiguanzhu">
+              <div class="focus yiguanzhu" @click.stop.prevent="dlFriend($event, friend.user)">
                 <i class="icon-yiguanzhu"></i>已关注
               </div>
               <div class="sign">
-                备注：哈哈哈哈哈哈哈哈fdgdfgfgdfgdgdfgfxkgjdfkgdfg
-              </div>
-            </div>
-          </router-link>
-          <router-link to="/" class="friends-item">
-            <div class="avatar"></div>
-            <div class="info">
-              <div class="name">
-                用户名
-              </div>
-              <div class="focus">
-                <i class="icon-yiguanzhu"></i>已关注
-              </div>
-              <div class="sign">
-                备注：哈哈哈哈哈哈哈哈fdgdfgfgdfgdgdfgfxkgjdfkgdfg
-              </div>
-            </div>
-          </router-link>
-          <router-link to="/" class="friends-item">
-            <div class="avatar"></div>
-            <div class="info">
-              <div class="name">
-                用户名
-              </div>
-              <div class="focus">
-                <i class="icon-yiguanzhu"></i>已关注
-              </div>
-              <div class="sign">
-                备注：哈哈哈哈哈哈哈哈fdgdfgfgdfgdgdfgfxkgjdfkgdfg
-              </div>
-            </div>
-          </router-link>
-          <router-link to="/" class="friends-item">
-            <div class="avatar"></div>
-            <div class="info">
-              <div class="name">
-                用户名
-              </div>
-              <div class="focus">
-                <i class="icon-yiguanzhu"></i>已关注
-              </div>
-              <div class="sign">
-                备注：哈哈哈哈哈哈哈哈fdgdfgfgdfgdgdfgfxkgjdfkgdfg
-              </div>
-            </div>
-          </router-link>
-          <router-link to="/" class="friends-item">
-            <div class="avatar"></div>
-            <div class="info">
-              <div class="name">
-                用户名
-              </div>
-              <div class="focus">
-                <i class="icon-yiguanzhu"></i>已关注
-              </div>
-              <div class="sign">
-                备注：哈哈哈哈哈哈哈哈fdgdfgfgdfgdgdfgfxkgjdfkgdfg
+                <div>城市：{{friend.city || '未知'}}</div>
+                <div>性别：{{friend.sex}}</div>
               </div>
             </div>
           </router-link>
         </el-tab-pane>
         <el-tab-pane label="互相关注" name="second">
-          <router-link to="/" class="friends-item">
-            <div class="avatar"></div>
+          <router-link v-for="(friend, key) in isFriend" v-if="friend.eachFocus" :to="'/' + friend.user" :key="key" class="friends-item">
+            <div class="avatar"><img :src="friend.avatar"></div>
             <div class="info">
               <div class="name">
-                用户名
+                {{friend.name}}
               </div>
-              <div class="focus huxiangguanzhu">
+              <div class="focus huxiangguanzhu" @click.stop.prevent="dlFriend($event, friend.user)">
                 <i class="icon-huxiangguanzhu"></i>互相关注
               </div>
               <div class="sign">
-                备注：哈哈哈哈哈哈哈哈fdgdfgfgdfgdgdfgfxkgjdfkgdfg
+                <div>城市：{{friend.city || '未知'}}</div>
+                <div>性别：{{friend.sex}}</div>
               </div>
             </div>
           </router-link>
-          <router-link to="/" class="friends-item">
-            <div class="avatar"></div>
-            <div class="info">
-              <div class="name">
-                用户名
-              </div>
-              <div class="focus">
-                <i class="icon-huxiangguanzhu"></i>互相关注
-              </div>
-              <div class="sign">
-                备注：哈哈哈哈哈哈哈哈fdgdfgfgdfgdgdfgfxkgjdfkgdfg
-              </div>
-            </div>
-          </router-link><router-link to="/" class="friends-item">
-          <div class="avatar"></div>
-          <div class="info">
-            <div class="name">
-              用户名
-            </div>
-            <div class="focus">
-              <i class="icon-huxiangguanzhu"></i>互相关注
-              </div>
-            <div class="sign">
-              备注：哈哈哈哈哈哈哈哈fdgdfgfgdfgdgdfgfxkgjdfkgdfg
-            </div>
-          </div>
-        </router-link><router-link to="/" class="friends-item">
-          <div class="avatar"></div>
-          <div class="info">
-            <div class="name">
-              用户名
-            </div>
-            <div class="focus">
-              <i class="icon-huxiangguanzhu"></i>互相关注
-              </div>
-            <div class="sign">
-              备注：哈哈哈哈哈哈哈哈fdgdfgfgdfgdgdfgfxkgjdfkgdfg
-            </div>
-          </div>
-        </router-link><router-link to="/" class="friends-item">
-          <div class="avatar"></div>
-          <div class="info">
-            <div class="name">
-              用户名
-            </div>
-            <div class="focus">
-              <i class="icon-huxiangguanzhu"></i>互相关注
-              </div>
-            <div class="sign">
-              备注：哈哈哈哈哈哈哈哈fdgdfgfgdfgdgdfgfxkgjdfkgdfg
-            </div>
-          </div>
-        </router-link><router-link to="/" class="friends-item">
-          <div class="avatar"></div>
-          <div class="info">
-            <div class="name">
-              用户名
-            </div>
-            <div class="focus">
-              <i class="icon-huxiangguanzhu"></i>互相关注
-              </div>
-            <div class="sign">
-              备注：哈哈哈哈哈哈哈哈fdgdfgfgdfgdgdfgfxkgjdfkgdfg
-            </div>
-          </div>
-        </router-link>
         </el-tab-pane>
       </el-tabs>
     </div>
     <div class="right">
-      <div class="top"><span>推荐</span><div class="refresh">换一批</div></div>
-      <router-link to="/" class="friends-item">
-        <div class="avatar"></div>
+      <div class="top"><span>推荐</span><div class="refresh" @click="changeNF">换一批</div></div>
+      <router-link v-for="(friend, key) in showNF" :to="'/' + friend.user" :key="key" class="friends-item">
+        <div class="avatar"><img :src="friend.avatar"></div>
         <div class="info">
           <div class="name">
-            用户名
+            {{friend.name}}
           </div>
-          <div class="focus">
+          <div class="focus jiaguanzhu" @click.stop.prevent="addFriend($event, friend.user)">
             <i class="icon-jiaguanzhu"></i>加关注
-              </div>
+          </div>
           <div class="sign">
-            备注：哈哈哈哈哈哈哈哈fdgdfgfgdfgdgdfgfxkgjdfkgdfg
-          </div>
-        </div>
-      </router-link>
-      <router-link to="/" class="friends-item">
-        <div class="avatar"></div>
-        <div class="info">
-          <div class="name">
-            用户名
-          </div>
-          <div class="focus jiaguanzhu">
-            <i class="icon-jiaguanzhu"></i>加关注
-              </div>
-          <div class="sign">
-            备注：哈哈哈哈哈哈哈哈fdgdfgfgdfgdgdfgfxkgjdfkgdfg
-          </div>
-        </div>
-      </router-link>
-      <router-link to="/" class="friends-item">
-        <div class="avatar"></div>
-        <div class="info">
-          <div class="name">
-            用户名
-          </div>
-          <div class="focus">
-            <i class="icon-jiaguanzhu"></i>加关注
-              </div>
-          <div class="sign">
-            备注：哈哈哈哈哈哈哈哈fdgdfgfgdfgdgdfgfxkgjdfkgdfg
+            <div>城市：{{friend.city || '未知'}}</div>
+            <div>性别：{{friend.sex}}</div>
           </div>
         </div>
       </router-link>
@@ -209,12 +62,71 @@
   export default {
     data() {
       return {
-        activeName2: 'first'
+        activeName2: 'first',
+        isFriend: [],
+        notFriend: [],
+        nfP: 1
       };
+    },
+    computed: {
+      showNF() {
+        var showNf = [];
+        var index = (this.nfP === 1) ? 0 : ((this.nfP - 1) * 3);
+        var leng = (index + 3 <= this.notFriend.length) ? (index + 3) : this.notFriend.length;
+        for (var i = index; i < leng; i++) {
+          showNf.push(this.notFriend[i]);
+        }
+        return showNf;
+      }
+    },
+    created() {
+      this.getFriends();
     },
     methods: {
       handleClick(tab, event) {
         console.log(tab, event);
+      },
+      getFriends() {
+        this.$http.get('/getFriends').then(response => {
+          var result = response.body;
+          if (result.result === '1') {
+            this.isFriend = result.isFriend;
+            this.notFriend = result.notFriend;
+          }
+        }, response => {
+          // error callback
+        });
+      },
+      changeNF() {
+        this.nfP = (this.nfP * 3 < this.notFriend.length) ? this.nfP + 1 : 1;
+      },
+      addFriend(e, friend) {
+        this.$http.post('/addFriend', {
+          friend: friend
+        }).then(response => {
+          var result = response.body;
+          if (result.result === '1') {
+            this.$message.success('添加好友成功');
+
+            this.getFriends();
+          }
+        }, response => {
+          // error callback
+        });
+      },
+      dlFriend(e, friend) {
+        this.$http.post('/dlFriend', {
+          friend: friend
+        }).then(response => {
+          var result = response.body;
+          if (result.result === '1') {
+            this.$message.success('删除好友成功');
+
+            this.getFriends();
+          }
+        }, response => {
+          // error callback
+        });
       }
     }
   };
@@ -223,19 +135,18 @@
 <style lang="stylus" rel="stylesheet/stylus">
   .friends
     overflow: hidden
+    background: #ffffff
     .left
       box-sizing: border-box
       padding: 10px
       width: 590px
       float: left
-      background: #ffffff
       font-size: 0
     .right
       box-sizing: border-box
       float: right
       width: 290px
       padding: 6px 10px
-      background: #fff
       height: 600px
       overflow: hidden
       .top
@@ -309,6 +220,5 @@
             color: #13CE66
             border: 1px solid #13CE66
         .sign
-          height: 50px
           overflow: hidden
 </style>

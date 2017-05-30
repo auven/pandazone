@@ -6,13 +6,12 @@ var db = require("./dbs.js");
 
 var messageSchema = new mongoose.Schema({
   author    :   {type : String},
-  time      :   {type : Number},
+  time      :   {type : Date},
   content   :   {type : String}
 });
 
 var friendSchema = new mongoose.Schema({
-  user      :   {type : String},
-  eachFocus :   {type : Boolean, default: false}
+  user      :   {type : String}
 });
 
 var userSchema = new mongoose.Schema({
@@ -32,7 +31,35 @@ var userSchema = new mongoose.Schema({
   friends  :  [friendSchema]
 });
 
+// 留言
+userSchema.statics.message = function (obj, callback) {
+  this.model('User').findOne({user: obj.user}, function (err, user) {
+    if (!user) {
+      return;
+    }
+    user.messages.push(obj.body);
+    user.save(callback);
+  })
+};
 
+// 删除留言
+userSchema.statics.dlMsg = function (obj, callback) {
+  this.model('User').update({user: obj.user}, {$pull: {messages: {_id: obj.messageId}}}, callback);
+};
+
+userSchema.statics.addFriend = function (obj, callback) {
+  this.model('User').findOne({user: obj.user}, function (err, user) {
+    if (!user) {
+      return;
+    }
+    user.friends.push(obj.body);
+    user.save(callback);
+  })
+};
+
+userSchema.statics.dlFriend = function (obj, callback) {
+  this.model('User').update({user: obj.user}, {$pull: {friends: {user: obj.friend}}}, callback);
+};
 
 var userModel = db.model('User', userSchema);
 module.exports = userModel;

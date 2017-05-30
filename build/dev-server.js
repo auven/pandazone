@@ -63,6 +63,12 @@ app.post('/updateProfile',router.updateProfile);
 app.post('/newAlbum',router.newAlbum);
 app.get('/getAlbum',router.getAlbum);
 app.get('/getAlbumById',router.getAlbumById);
+app.post('/newMsg',router.newMsg);
+app.get('/getMsg', router.getMsg);
+app.post('/dlMsg', router.dlMsg);
+app.get('/getFriends',router.getFriends);
+app.post('/addFriend', router.addFriend);
+app.post('/dlFriend', router.dlFriend);
 
 var compiler = webpack(webpackConfig)
 
