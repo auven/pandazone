@@ -4,7 +4,7 @@
       <div class="nav-wrapper clearfix">
         <div class="user-avatar"><img :src="user.showUser.avatar"></div>
         <div class="right">
-          <div class="user-name">{{ user.showUser.name }}</div>
+          <div class="user-name">{{ user.showUser.name }}<span class="add-friend jiaguanzhu" v-if="!isFriend && !user.isLoginUser" @click="addFriend"><i class="icon-jiaguanzhu"></i>加关注</span><span class="add-friend yiguanzhu" v-if="isFriend && !eachFocus" @click="dlFriend"><i class="icon-yiguanzhu"></i>已关注</span><span class="add-friend huxiangguanzhu" v-if="isFriend && eachFocus" @click="dlFriend"><i class="icon-huxiangguanzhu"></i>互相关注</span></div>
           <div class="nav" v-show="user.isLoginUser">
             <template>
               <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -50,14 +50,20 @@
     },
     data() {
       return {
-        activeName: ''
+        activeName: '',
+        isFriend: false,
+        eachFocus: false
       };
     },
     watch: {
-      '$route': 'setActiveName'
+      '$route': function () {
+        this.setActiveName();
+        this.chkFriend();
+      }
     },
     created() {
       this.setActiveName();
+      this.chkFriend();
     },
     methods: {
       handleClick(tab, event) {
@@ -67,6 +73,49 @@
       },
       setActiveName() {
         this.activeName = this.$route.fullPath;
+      },
+      chkFriend() {
+        var user = this.$route.params.user;
+        this.$http.get('/chkFriend?friend=' + user).then(response => {
+          // success callback
+          var result = response.body;
+          if (result.result === '1') {
+            this.isFriend = result.isFriend;
+            this.eachFocus = result.eachFocus;
+          }
+        }, response => {
+          // error callback
+        });
+      },
+      addFriend() {
+        var user = this.$route.params.user;
+        this.$http.post('/addFriend', {
+          friend: user
+        }).then(response => {
+          var result = response.body;
+          if (result.result === '1') {
+            this.$message.success('添加好友成功');
+
+            this.chkFriend();
+          }
+        }, response => {
+          // error callback
+        });
+      },
+      dlFriend() {
+        var user = this.$route.params.user;
+        this.$http.post('/dlFriend', {
+          friend: user
+        }).then(response => {
+          var result = response.body;
+          if (result.result === '1') {
+            this.$message.success('删除好友成功');
+
+            this.chkFriend();
+          }
+        }, response => {
+          // error callback
+        });
       }
     }
   };
@@ -102,6 +151,27 @@
             color: #1D8CE0
             font-size: 20px
             text-shadow: 1px 1px 1px rgba(0,0,0,.2)
+            .add-friend
+              display: inline-block
+              font-size: 16px
+              text-shadow: none
+              margin-left: 20px
+              padding: 3px 8px
+              height: 18px
+              line-height: 18px
+              text-align: center
+              border: 1px solid #d1dbe5
+              border-radius: 5px
+              cursor: pointer
+              &.jiaguanzhu
+                color: #58B7FF
+                border: 1px solid #58B7FF
+              &.yiguanzhu
+                color: #F7BA2A
+                border: 1px solid #F7BA2A
+              &.huxiangguanzhu
+                color: #13CE66
+                border: 1px solid #13CE66
           .nav
             bottom: -12px
       .visits

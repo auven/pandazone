@@ -1266,3 +1266,41 @@ exports.modifyBlog = function (req, res, next) {
     });
   });
 };
+
+// 检查好友关系
+exports.chkFriend = function (req, res, next) {
+  var friend = req.query.friend;
+
+  var user = req.session.login.user;
+  User.findOne({user: user}, 'friends', function (err, user1) {
+    var flag = false;
+    for (var i = 0; i < user1.friends.length; i++) {
+      if (friend === user1.friends[i].user) {
+        flag = true;
+        break;
+      }
+    }
+
+    if (flag) {
+      var eachFocus = false;
+      User.findOne({user: friend}, 'friends', function (err, user2) {
+        if (err) {
+          res.send('-3');
+          return;
+        }
+
+        for (var j = 0; j < user2.friends.length; j++) {
+          if (user === user2.friends[j].user) {
+            eachFocus = true;
+            break;
+          }
+        }
+
+        res.json({result: '1', isFriend: true, eachFocus: eachFocus});
+      })
+    } else {
+      res.json({result: '1', isFriend: false});
+    }
+
+  })
+};

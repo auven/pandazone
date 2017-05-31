@@ -7,7 +7,7 @@
         <div v-for="status in statusData">
           <status :status="status" :user="user" @refresh="getStatus" class="mood-item"></status>
         </div>
-        <div class="block">
+        <div class="block" v-if="statusData.length > 0">
           <el-pagination
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
@@ -17,6 +17,9 @@
             layout="total, sizes, prev, pager, next, jumper"
             :total="total">
           </el-pagination>
+        </div>
+        <div style="text-align: center" v-if="statusData.length === 0">
+          尚无说说
         </div>
       </div>
       <div class="right">

@@ -17,6 +17,9 @@
         <div class="album-name">{{ album.body.name }}</div>
       </router-link>
     </div>
+    <div style="text-align: center; margin: 20px" v-if="albums.length === 0">
+      尚无相册
+    </div>
   </div>
 </template>
 

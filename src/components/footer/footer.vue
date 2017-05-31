@@ -9,7 +9,7 @@
         </el-col>
         <el-col :span="6" class="contact">
           <ul>
-            <li><a href="#"><i class="icon-github"></i></a></li>
+            <li><a href="https://github.com/auven/pandazone"><i class="icon-github"></i></a></li>
             <li>
               <a href="#"><i class="icon-weixin"></i></a>
               <div class="QRCode"><img src="./WechatIMG2.jpeg"></div>

@@ -33,6 +33,9 @@
             :total="total">
           </el-pagination>
         </div>
+        <div style="text-align: center; margin: 20px" v-if="blogs.length === 0">
+          尚无博客
+        </div>
       </div>
       <div class="right">
         <div class="user-blog-info">

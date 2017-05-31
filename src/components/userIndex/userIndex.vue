@@ -1,14 +1,19 @@
 <template>
   <div class="userIndex" v-title data-title="个人主页">
     <div class="left">
-
+      <div>此版块尚未开发完成</div>
+      <div>Todo:</div>
+      <ul>
+        <li>空间总览</li>
+        <li>个人简介</li>
+      </ul>
     </div>
     <div class="right">
-      <new-mood @subNewMood="getStatus"></new-mood>
+      <new-mood @subNewMood="getStatus" v-if="user.isLoginUser"></new-mood>
       <div v-for="status in statusData">
         <status :status="status" :user="user" @refresh="getStatus"></status>
       </div>
-      <div class="block">
+      <div class="block" v-if="statusData.length > 0">
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -18,6 +23,9 @@
           layout="total, sizes, prev, pager, next, jumper"
           :total="total">
         </el-pagination>
+      </div>
+      <div style="text-align: center" v-if="statusData.length === 0">
+        尚无动态
       </div>
     </div>
   </div>
@@ -71,12 +79,16 @@
     },
     methods: {
       getStatus() {
+        // 这里不清除会一直循环
+        if (this.pdzTimer.getStatus) {
+          clearInterval(this.pdzTimer.getStatus);
+        }
+
         // 使用定时的方式来获取props
         var self = this;
         self.pdzTimer.getStatus = setInterval(function () {
           var page = self.$route.query.page || 1;
-          console.log('hahafdfgdgdfgfsddfgj', self.user.loginUser.user, page);
-          if (self.user.loginUser.user) {
+          if (self.user.showUser.user) {
             clearInterval(self.pdzTimer.getStatus);
             self.$http.get('/getStatus?user=' + self.user.showUser.user + '&all=false&' + 'type=all&' + 'page=' + page + '&pageSize=' + self.pageSize).then(response => {
               var result = response.body;
@@ -155,8 +167,9 @@
     .left
       float: left
       width: 290px
-      background: #000
+      background: #fff
       height: 600px
+      opacity: 0.5
     .right
       width: 590px
       float: right

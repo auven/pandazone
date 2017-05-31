@@ -18,7 +18,12 @@
       </div>
     </div>
     <div class="right">
-
+      <div>此版块尚未开发完成</div>
+      <div>Todo:</div>
+      <ul>
+        <li>活跃榜</li>
+        <li>今日运势</li>
+      </ul>
     </div>
   </div>
 </template>
@@ -157,6 +162,7 @@
     .right
       float: right
       width: 290px
-      background: #000
+      background: #fff
       height: 600px
+      opacity: 0.5
 </style>

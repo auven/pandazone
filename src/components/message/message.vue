@@ -1,6 +1,6 @@
 <template>
   <div class="message" v-title data-title="留言">
-    <div class="top"><span>我的留言</span></div>
+    <div class="top"><span v-show="user.isLoginUser">我的留言</span><span v-show="!user.isLoginUser">Ta的留言</span></div>
     <div class="message-main">
       <div class="left">
         <div class="newMsg msg-item">
@@ -31,9 +31,24 @@
             <div class="text">{{ item.content }}</div>
           </div>
         </div>
+        <div style="text-align: center; margin: 20px" v-if="msg.length === 0">
+          尚无留言
+        </div>
       </div>
       <div class="right">
-
+        <div class="user-msg-info">
+          <div class="user-avatar">
+            <img :src="user.showUser.avatar">
+          </div>
+          <div class="msg-info">
+            <div class="user-name">
+              {{ user.showUser.name }}
+            </div>
+            <div class="msg-total">
+              <span class="total">{{ msg.length }}</span>&nbsp;条留言
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -140,8 +155,38 @@
     .message-main
       overflow: hidden
       .right
+        margin-top: 20px
         float: right
         width: 230px
+        .user-msg-info
+          position: relative
+          padding-bottom: 20px
+          border-bottom: 1px solid #C0CCDA
+          .user-avatar
+            img
+              width: 80px
+              height: 80px
+              border: 1px dashed #C0CCDA
+              border-radius: 5px
+          .msg-info
+            position: absolute
+            width: 130px
+            top: 0
+            left: 90px
+            text-align: center
+            .user-name
+              height: 40px
+              line-height: 40px
+              font-size: 18px
+              font-weight: 700
+            .msg-total
+              height: 40px
+              line-height: 40px
+              color: #475669
+              .total
+                font-size: 24px
+                font-weight: 700
+                color: #58B7FF
       .left
         width: 600px
         float: left
