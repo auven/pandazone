@@ -34,6 +34,8 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import router from '../../router';
+
   export default {
     props: {
       user: {
@@ -66,11 +68,7 @@
           var result = response.body;
           if (result.result === '1') {
             this.$message.success('新建相册成功');
-            this.moodText = '';
-            this.moodImg = [];
-            this.showAddImg = false;
-            // 触发父组件里的方法
-            this.$emit('subNewMood');
+            router.push({name: 'albumDetail', params: {user: this.user.showUser.user, albumId: result.albumId}});
           }
         }, response => {
           // error callback

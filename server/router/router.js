@@ -777,7 +777,7 @@ exports.newBlog = function (req, res, next) {
               return;
             }
             console.log('新建博客成功');
-            res.json({result: '1'});
+            res.json({result: '1', blogId: blog._id});
           });
         })
       } else {
@@ -793,7 +793,7 @@ exports.newBlog = function (req, res, next) {
             return;
           }
           console.log('新建博客成功');
-          res.json({result: '1'});
+          res.json({result: '1', blogId: blog._id});
         });
       }
     });
@@ -928,7 +928,7 @@ exports.newAlbum = function (req, res, next) {
         res.send("-3"); //服务器错误
         return;
       }
-      res.json({result: '1'});
+      res.json({result: '1', albumId: album._id});
     })
   });
 };

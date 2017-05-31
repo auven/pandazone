@@ -18,7 +18,7 @@
             :total="total">
           </el-pagination>
         </div>
-        <div style="text-align: center" v-if="statusData.length === 0">
+        <div style="text-align: center; margin: 20px" v-if="statusData.length === 0">
           尚无说说
         </div>
       </div>

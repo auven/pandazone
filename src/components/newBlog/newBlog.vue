@@ -33,6 +33,7 @@
 <script type="text/ecmascript-6">
   import vueUeditor from '@/components/vueUeditor/vueUeditor';
   import Vue from 'vue';
+  import router from '../../router';
 
   export default {
     props: {
@@ -66,6 +67,7 @@
             var result = response.body;
             if (result.result === '1') {
               this.$message.success('发表博客成功');
+              router.push({name: 'blogDetail', params: {user: this.user.showUser.user, blogId: result.blogId}});
             }
           }, response => {
             // error callback

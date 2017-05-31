@@ -5,7 +5,7 @@
       <div v-for="status in statusData">
         <status :status="status" :user="user" @refresh="getStatus"></status>
       </div>
-      <div class="block">
+      <div class="block" v-if="statusData.length > 0">
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -16,14 +16,11 @@
           :total="total">
         </el-pagination>
       </div>
+      <div style="text-align: center;  margin: 20px" v-if="statusData.length === 0">
+        尚无动态
+      </div>
     </div>
     <div class="right">
-      <div>此版块尚未开发完成</div>
-      <div>Todo:</div>
-      <ul>
-        <li>活跃榜</li>
-        <li>今日运势</li>
-      </ul>
     </div>
   </div>
 </template>

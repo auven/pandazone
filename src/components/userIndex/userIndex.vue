@@ -1,12 +1,6 @@
 <template>
   <div class="userIndex" v-title data-title="个人主页">
     <div class="left">
-      <div>此版块尚未开发完成</div>
-      <div>Todo:</div>
-      <ul>
-        <li>空间总览</li>
-        <li>个人简介</li>
-      </ul>
     </div>
     <div class="right">
       <new-mood @subNewMood="getStatus" v-if="user.isLoginUser"></new-mood>
@@ -24,7 +18,7 @@
           :total="total">
         </el-pagination>
       </div>
-      <div style="text-align: center" v-if="statusData.length === 0">
+      <div style="text-align: center;  margin: 20px" v-if="statusData.length === 0">
         尚无动态
       </div>
     </div>
