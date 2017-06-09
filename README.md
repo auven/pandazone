@@ -45,13 +45,13 @@ npm run build
 
 ![image](https://raw.githubusercontent.com/auven/pandazone/master/screenshot/5.png)
 ![image](https://raw.githubusercontent.com/auven/pandazone/master/screenshot/6.png)
-![image](https://raw.githubusercontent.com/auven/pandazone/master/screenshot/7.png)
+![image](https://raw.githubusercontent.com/auven/pandazone/master/screenshot/7.PNG)
 
 ### 博客
 
 ![image](https://raw.githubusercontent.com/auven/pandazone/master/screenshot/8.png)
-![image](https://raw.githubusercontent.com/auven/pandazone/master/screenshot/9.png)
-![image](https://raw.githubusercontent.com/auven/pandazone/master/screenshot/10.png)
+![image](https://raw.githubusercontent.com/auven/pandazone/master/screenshot/9.PNG)
+![image](https://raw.githubusercontent.com/auven/pandazone/master/screenshot/10.PNG)
 
 ### 相册
 
