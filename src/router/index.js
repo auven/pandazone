@@ -21,7 +21,7 @@ import blogModify from '@/components/blogModify/blogModify';
 Vue.use(Router);
 
 export default new Router({
-  mode: 'history',
+  mode: process.env.NODE_ENV === 'development' ? 'history' : 'hash',
   base: __dirname,
   routes: [
     {
