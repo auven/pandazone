@@ -67,7 +67,6 @@
     overflow: auto
     .main-wrapper
       min-height: 100%
-      background: url(../static/images/72019_top.png) center 60px no-repeat
       overflow: hidden
       .main-body
         min-width: 960px
