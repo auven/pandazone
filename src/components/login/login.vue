@@ -111,10 +111,10 @@
           this.$http.get('/findUser/' + value).then(response => {
             // success callback
             var result = response.body;
-            if (result === '1') {
+            if (result.result === '1') {
               return callback(new Error('该账户未注册！'));
             }
-            if (result === '-1') {
+            if (result.result === '-1') {
               this.checkuser = true;
               if (this.checkuser === true && this.checkpass === true) {
                 this.loginBtn = false;

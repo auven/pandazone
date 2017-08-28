@@ -124,13 +124,13 @@ exports.findUser = function (req, res, next) {
   //查询数据库中是不是有这个人
   User.find({"user": user}, function (err, result) {
     if (err) {
-      res.send("-3"); //服务器错误
+      res.json({result: "-3"}); //服务器错误
       return;
     }
     if (result.length !== 0) {
-      res.send("-1"); //被占用
+      res.json({result: "-1"}); //被占用
     } else {
-      res.send("1"); // 没有被占用，可以注册
+      res.json({result: "1"}); // 没有被占用，可以注册
     }
   })
 };
@@ -267,7 +267,7 @@ exports.checkLogin = function (req, res, next) {
 exports.exit = function (req, res, next) {
   req.session.login = '';
   req.session.user = '';
-  res.send('1');
+  res.json({result: "1"});
 };
 
 // 设置显示的用户

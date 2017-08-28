@@ -104,7 +104,7 @@
       exit() {
         this.$http.post('/exit', {}).then(response => {
           var result = response.body;
-          if (result === '1') {
+          if (result.result === '1') {
             this.$message({
               message: '退出成功',
               type: 'success'

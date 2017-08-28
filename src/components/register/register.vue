@@ -162,10 +162,10 @@
           this.$http.get('/findUser/' + value).then(response => {
             // success callback
             var result = response.body;
-            if (result === '-1') {
+            if (result.result === '-1') {
               return callback(new Error('该账户已存在！'));
             }
-            if (result === '1') {
+            if (result.result === '1') {
               callback();
             }
           }, response => {
@@ -413,7 +413,11 @@
       getCaptcha() {
         this.$http.get('/getCaptcha').then(response => {
           // success callback
-          this.$refs.captcha.innerHTML = response.body;
+          if (process.env.NODE_ENV === 'development') {
+            this.$refs.captcha.innerHTML = response.body;
+          } else {
+            this.$refs.captcha.innerHTML = '2qxj';
+          }
           this.$refs.step3Form.resetFields();
           this.step3SbmBtn = true;
         }, response => {
