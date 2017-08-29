@@ -67,7 +67,7 @@
     overflow: auto
     .main-wrapper
       min-height: 100%
-      overflow: hidden
+      overflow: auto
       .main-body
         min-width: 960px
         margin: 0 auto
