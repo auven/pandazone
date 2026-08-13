@@ -1,3 +1,5 @@
+
+
 # pandazone
 
 > 使用vue2.0+element-ui+node.js+mongodb构建全栈空间博客系统，仿qq空间，有说说，博客，相册，留言，好友等模块。
@@ -40,11 +42,11 @@ npm run dev
 
 生产环境下，使用mock数据，若要更换真实数据，请修改`config/prod.env.js`里的`BASE_API`。
 
-```base
+```bash
 # 打包压缩代码
 npm run build
 
-# 预览网页
+# 预览网页 (默认运行在 localhost:5200)
 node server/prod.server.js
 ```
 
@@ -272,5 +274,3 @@ node server/prod.server.js
 ### 个人档
 
 ![image](https://raw.githubusercontent.com/auven/pandazone/master/screenshot/16.png)
-
-
